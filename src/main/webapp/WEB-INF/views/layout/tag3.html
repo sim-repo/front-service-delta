@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Accordion - Collapse content</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  
+  <script>
+	  $(document).ready(function () {
+		  $("ol").hide();
+		  $("h3 span").click(function(){	
+				$(this).parent().next().slideToggle();
+			});
+		});  
+  </script>  
+<style>
+  
+.square {
+  font-family: Geneva, Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  margin: 0;
+  list-style: none;
+  background:#166ba2;
+  padding: 2px;
+  border-bottom: 1px transparent;
+  text-align: left;
+  color:#ffffff; 
+}
+
+.square h3 {
+  position: relative;
+  margin: 0 0 0px 0em;
+  padding: 4px 4px;
+  transition: .3s linear;
+  border-bottom: 1px solid transparent; 
+  text-align: left;
+}
+
+
+.square h3:before {
+  position: absolute;
+  top: -2px;
+  left: -2em;
+  width: 1em;
+  box-sizing: border-box;
+  margin-right: 8px;
+  padding: 1px;
+  border-bottom: 1px solid transparent;
+  background: #1667a1;
+  color: #1667a1;  
+  text-align: left;
+  transition: .3s linear;
+}
+
+.square h3:hover {  
+  box-sizing: border-box;
+  border-bottom: 1px solid #389F70;
+  display: block;
+  text-align: left;
+}
+
+.square h3:hover:before {
+  border: 1px solid #389F70;
+  background: #98EABA;
+}
+
+
+
+input[type=submit]:hover {
+    color:#5da5d8;
+}
+
+input[type=submit] {
+    padding:5px 15px; 
+    background:#1a557f; 
+    border:0 none;
+    cursor:pointer;
+    font-size: 10pt;
+    color:#ffffff; 
+}
+
+input[type=text] {
+    padding:5px 15px; 
+    background:#ffffff; 
+    border:0 none;
+    cursor:pointer;
+    font-size: 10pt;
+    color:#166ba2; 
+    font-size: 12pt;
+    width: 80%;
+   
+    margin: 8px 0;
+    box-sizing: border-box;
+    margin: 2px; 
+    padding-left: 10%;
+}
+
+
+
+  </style>
+</head>
+<body>
+	<div class="menucontainer">
+		<div class="tag_list" th:unless="${#lists.isEmpty(allTags)}">
+			<div id="accordion"> 
+			  <div th:each="tag : ${allTags}" th:remove="tag">
+				  <div th:class="${tag.classificatorId}">	
+						<div class="square">				
+							<h3 th:class="${tag.classificatorId}"><span class="expand" th:text="${tag.tag}">+</span></h3>										
+								<ol class="square">			
+								 	 <form class="tag-form" th:id="${tag.sqlTemplate}">					 	 			 	 				 	 
+									 	 <div th:each="parm : ${tag.params}" th:remove="tag"> 				 	 
+									 	 	<input th:id="${parm.paramName}" class="class-tag-input" type="text" th:placeholder="${parm.paramDesc}">
+									 	 </div>
+									 	 <input type="submit" value="go">						 	 						 		 	 						 	 						 	
+								 	 </form>
+								</ol>	
+						</div>								 	 				
+				  </div>
+			  </div>
+		  </div>
+		</div>
+	</div>	
+</body>
+</html>

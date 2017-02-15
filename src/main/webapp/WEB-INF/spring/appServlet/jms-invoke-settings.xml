@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="syncConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="trustAllPackages" value="true"/>
+    </bean>
+
+    <bean id="syncQueue2" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="mmm2"/>
+    </bean>
+    
+    <bean id="syncQueue" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="mmm"/>
+    </bean>
+    
+
+	<bean id="remoteService"
+            class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
+        <property name="serviceInterface" value="com.simple.server.service.remote.IRemoteService"/>
+        <property name="connectionFactory" ref="syncConnectionFactory"/>
+        <property name="queue" ref="syncQueue2"/>
+    </bean>
+	
+	
+	<bean id="remoteLogService"
+           class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
+       <property name="serviceInterface" value="com.simple.server.service.remote.IRemoteLogService"/>
+       <property name="connectionFactory" ref="syncConnectionFactory"/>
+       <property name="queue" ref="syncQueue"/>
+    </bean>
+</beans>

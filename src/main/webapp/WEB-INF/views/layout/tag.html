@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+		<div class="tag_list" th:unless="${#lists.isEmpty(allTags)}">						
+			<table>
+				<thead>
+					<tr>
+						<th th:text="#{tag.column.1}">tag</th>
+						<th th:text="#{tag.column.2}">template name</th>
+						<th th:text="#{tag.column.3}">template desc.</th>
+						<th th:text="#{tag.column.4}">classificator id</th>
+						<th th:text="#{tag.column.5}">parameters</th>
+					</tr>
+				</thead>
+				<tbody class="tag_tbody">
+					<div th:each="tag : ${allTags}" th:remove="tag">
+						<tr th:class="${tag.classificatorId}">
+														
+								<td th:text="${tag.sqlTemplate}">concrete sql template name</td>
+								<td th:text="${tag.description}">concrete sql template desc</td>
+								<td th:text="${tag.classificatorId}">concrete classificator id</td>
+								<td>
+							
+									<table>
+									<thead>
+									<tr>
+									<td th:text="#{tag.parm.column.1}">1</td>
+									<td th:text="#{tag.parm.column.2}">2</td>
+									<td th:text="#{tag.parm.column.3}">3</td>
+									<td th:text="#{tag.parm.column.4}">4</td>
+									</tr>
+									</thead>
+									<tbody>
+									<tr th:each="parm : ${tag.params}"> 
+										<td th:text="${parm.paramName}"></th>
+										<td th:text="${parm.paramDesc}"></th>
+										<td th:text="${parm.sqlType}"></th>
+										<td th:text="${parm.sample}"></th>							
+									</tr>						
+									</tbody>
+									</table>				
+								</td>													
+						</tr>
+					</div>						
+				</tbody>
+			</table>
+		</div>
+</body>
+</html>	

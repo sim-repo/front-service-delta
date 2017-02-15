@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<link rel="stylesheet" type="text/css" href="resources/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/menu/component.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/menu/demo.css" />
+	<script src="resources/js/menu/modernizr.custom.js"></script>
+</head>
+<body>
+
+
+
+<div th:fragment="slide" th:remove="tag">
+	<div th:with="level=${1}" th:remove="tag">
+	<div th:with="menuName=${parent}" th:remove="tag">	
+	<div class="menucontainer">
+	<div class="mp-pusher" id="mp-pusher">
+		<nav id="mp-menu" class="mp-menu">
+			<div th:fragment="submenu(menuName, allClassificator, level)" th:remove="tag">
+				<div th:unless="${#lists.isEmpty(allClassificator)}" th:remove="tag">
+					<div class="mp-level">
+						<h2 class="icon-circle-left" th:text="${menuName}">submenu</h2>
+						<ul>
+							<div th:each="classificator : ${allClassificator}" th:class="${#objects.nullSafe(level, 1) &gt; level}? 'children'" th:remove="tag">				
+								<div th:if="${classificator.level == level}" th:with="level=${level+1}" th:remove="tag">
+									<li class="icon-menu">	
+										<a class="icon-menu" href="#" 
+										   th:class="${classificator.clickable==1}? 'mi_cm_clickable': 'mi_cm_unclickable'" 
+										   th:text="${classificator.name}"
+										   th:id="${classificator.id}">menu item</a>		
+										<div th:include="::submenu(menuName = ${classificator.name}, allClassificator = ${classificator.children}, level=${classificator.level+1})" th:remove="tag"/>
+									</li>													
+						</ul>
+					</div>				
+		</nav>
+		<div class="menuscroller">
+			<div class="menuscroller-inner">
+				<div class="menucontent clearfix">
+					<div class="block block-40 clearfix">
+						<a href="#" id="trigger" class="menu-trigger"></a>
+					</div>
+				</div>
+			</div>		
+</body>
+</html>

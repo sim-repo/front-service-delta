@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<title>Адаптируемый </title>
+					
+	<link rel="stylesheet" type="text/css" href="resources/css/demo.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/component.css" />		
+	<link rel="stylesheet" type="text/css" href="resources/css/menu/normalize.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/menu/demo.css" />
+	<link rel="stylesheet" type="text/css" href="resources/css/menu/component.css" />			
+	<link rel="stylesheet" type="text/css" href="resources/css/style.css" />
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="resources/js/menu/modernizr.custom.js"></script>
+	<!--[if IE]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->				
+</head>
+
+			
+							
+<body>
+
+<div class="container">
+<p><p><p>
+<div th:include="layout/slider-menu::slide"></div>							
+			
+<div id="tabs" class="tabs">
+	<nav>
+		<ul>
+			<li><a href="#section-1" class="icon-home"><span>Tag</span></a></li>
+			<li><a href="#section-2" class="icon-spinner9"><span>Reports</span></a></li>
+			<li><a href="#section-3" class="icon-cog"><span>Statistics</span></a></li>
+			<li><a href="#section-4" class="icon-stats-dots"><span>Settings</span></a></li>
+			<li><a href="#section-5" class="icon-stats-bars"><span>Help</span></a></li>
+		</ul>
+	</nav>			
+	<div class="content">				
+	
+	<section id="section-1">		
+		<div class="mediabox">			
+			<p><div th:include="layout/tag3"></div></p>
+			<p><div th:include="layout/result"></div></p>
+		</div>
+		<div class="mediabox">		
+			
+		</div>				
+	</section>	
+	<section id="section-2">		
+	</section>
+	<section id="section-3">		
+		<div class="mediabox">
+		</div>
+		<div class="mediabox">	
+			<h3>Заголовок 9</h3>
+			<p>Donec luctus rhoncus viverra. Sed quis aliquet turpis. Aliquam metus orci, mollis at lobortis viverra, facilisis sit amet erat.</p>
+		</div>
+	</section>
+	<section id="section-4">
+		<div class="mediabox">
+	
+			<h3>Заголовок 10</h3>
+			<p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nunc ut arcu imperdiet, elementum velit id, mollis lorem. Nunc viverra lacus et volutpat tincidunt. </p>
+		</div>
+		<div class="mediabox">
+	
+			<h3>Заголовок 11</h3>
+			<p>Maecenas aliquet sed nunc eget ornare. Donec at arcu dignissim, porta quam in, mollis nisi. Aenean sit amet lorem blandit, interdum tortor id, euismod nisi.</p>
+		</div>	
+	</section>
+	<section id="section-5">
+		<div class="mediabox">
+	
+			<h3>Заголовок 13</h3>
+			<p>Nulla ut odio sed nisi tincidunt fermentum in at urna. Nunc lacinia orci quis risus vehicula, vel consequat ligula congue.</p>
+		</div>
+		<div class="mediabox">
+		
+			<h3>Заголовок 14</h3>
+			<p>In pharetra vestibulum massa, sed auctor nisi iaculis eu. Duis mattis, massa at condimentum tincidunt, mauris nibh sodales mi, vel egestas tellus leo ac massa.</p>
+		</div>		
+	</section>
+			
+			
+			
+		</div>
+	</div>
+</div>
+		
+	
+<script src="resources/js/tab/cbpFWTabs.js"></script>
+<script src="resources/js/menu/classie.js"></script>
+<script src="resources/js/menu/mlpushmenu.js"></script>
+<script src="resources/js/tag_menu.js"></script>		
+<script>
+	new CBPFWTabs( document.getElementById( 'tabs' ) );
+	new mlPushMenu( document.getElementById( 'mp-menu' ), document.getElementById( 'trigger' ) );
+</script>
+</body>
+</html>

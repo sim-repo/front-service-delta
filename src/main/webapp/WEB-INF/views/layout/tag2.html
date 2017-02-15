@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Accordion - Collapse content</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion({
+    	 active: false,
+         autoHeight: false,
+         navigation: true,
+         collapsible: true
+    });
+
+  } );
+  </script>
+</head>
+<body>
+ 
+<p><p>
+
+ 
+  <div class="tag_tbody">  
+  	<div class="tag_list" th:unless="${#lists.isEmpty(allTags)}">
+  		<div id="accordion">    	
+  			<div th:each="tag : ${allTags}" th:remove="tag">
+  			<h3 th:class="${tag.classificatorId}" th:text="${tag.tag}"> </h3>
+  			<div th:class="${tag.classificatorId}">			    
+			    <p th:class="${tag.classificatorId}" th:text="${tag.sqlTemplate}">Text</p>
+			    
+			    <form class="tag-form" th:id="${tag.sqlTemplate}">
+				    <div th:each="parm : ${tag.params}"> 
+											<div th:text="${parm.paramDesc}+':'"></div>																										
+											<input th:id="${parm.paramName}" class="class-tag-input" type="text" size="40" th:text="  ${parm.sample}">																																	 							
+					</div>	
+					<p id="par1">Answer</p>					
+				    <p><input type="submit" value="go">				
+				</form>			    
+			</div>	
+  		</div>
+  	</div>
+  </div>
+ </div>
+</body>
+</html>

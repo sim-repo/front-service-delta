@@ -1,0 +1,36 @@
+@font-face {
+  font-family: 'left-slider';
+  src:  url('../fonts/left-slider.eot?ust3qz');
+  src:  url('../fonts/left-slider.eot?ust3qz#iefix') format('embedded-opentype'),
+    url('../fonts/left-slider.ttf?ust3qz') format('truetype'),
+    url('../fonts/left-slider.woff?ust3qz') format('woff'),
+    url('../fonts/left-slider.svg?ust3qz#left-slider') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'left-slider' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-menu:before {
+  content: "\e9bd";
+}
+.icon-circle-right:before {
+  content: "\ea42";
+}
+.icon-circle-left:before {
+  content: "\ea44";
+}
+

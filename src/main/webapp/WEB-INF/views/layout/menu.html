@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Menu - Icons</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+	  $( function() {
+	    $( "#classificator_menu" ).menu();
+	  } );
+  </script>	
+  <style>
+  .ui-menu { width: 150px; }
+  </style>
+</head>
+
+
+<body>
+
+<div th:fragment="submenu(allClassificator, level)" th:remove="tag">	
+<div th:with="level=${1}" th:remove="tag">
+	<ul id="classificator_menu">	
+		<li>
+	    	<div>Tag</div>
+			<div th:fragment="submenu(allClassificator, level)" th:remove="tag">				
+				  <div th:unless="${#lists.isEmpty(allClassificator)}" th:remove="tag">
+					  <ul>
+						  <div th:each="classificator : ${allClassificator}" th:class="${#objects.nullSafe(level, 1) &gt; level}? 'children'" th:remove="tag">
+							    <div th:if="${classificator.level == level}" th:with="level=${level+1}" th:remove="tag">							     									    	 
+							    	 <li th:id="${classificator.id}">								    	 									    	 
+							    	 	<div th:text="${classificator.name}" th:class="${classificator.clickable==1}? 'mi_cm_clickable': 'mi_cm_unclickable'" th:id="${classificator.id}">
+							    	 		Menu Item								    	 		
+							    	 	</div>
+							    	 	<div th:include="::submenu(allClassificator = ${classificator.children} , level=${classificator.level+1})" th:remove="tag" />								    	 	
+							    	 </li>    									
+								</div>
+						  </div>											  		 
+					  </ul>			 	
+				</div>
+		</li>	  
+	</ul>
+</body>
+</html>
