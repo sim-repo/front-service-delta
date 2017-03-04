@@ -16,9 +16,10 @@ import com.simple.server.config.EndpointType;
 import com.simple.server.config.OperationType;
 import com.simple.server.domain.contract.BusReadMsg;
 import com.simple.server.domain.contract.BusWriteMsg;
+import com.simple.server.domain.contract.CustMsg;
 import com.simple.server.domain.contract.SorderMsg;
 import com.simple.server.domain.contract.BusReportMsg;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.statistics.time.Timing;
 
 
@@ -33,7 +34,7 @@ public class AsyncReadController {
 	
 	
 	@RequestMapping(value = "json/nav/so", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status jsonNavSoGet(@RequestBody SorderMsg so) {		
+	public StatusMsg jsonNavSoGet(@RequestBody SorderMsg so) {		
 		try {																					
 					
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());					
@@ -45,14 +46,13 @@ public class AsyncReadController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}
 	}
 	
 	@RequestMapping(value = "json/nav/tag", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status  jsonNavTagGet(@RequestBody BusReportMsg req){				
+	public StatusMsg  jsonNavTagGet(@RequestBody BusReportMsg req){				
 		try {			
-
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());		
 			req.setMethodHandler("/async/get/json/nav/tag");
 			req.setLogClass(BusReadMsg.class);
@@ -65,7 +65,9 @@ public class AsyncReadController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}		
-	}		
+	}
+	
+	
 }

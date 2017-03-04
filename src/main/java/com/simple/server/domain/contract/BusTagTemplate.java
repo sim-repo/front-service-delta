@@ -60,7 +60,7 @@ public class BusTagTemplate extends ALogContract {
 
 	public BusTagTemplate() {
 	}
-	@JsonIgnore
+
 	@Override
 	public String getClazz() {
 		return this.getClass().getName();

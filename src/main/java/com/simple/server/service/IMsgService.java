@@ -3,7 +3,7 @@ package com.simple.server.service;
 import org.springframework.messaging.MessageChannel;
 
 import com.simple.server.domain.contract.IContract;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 
 
 public interface IMsgService {

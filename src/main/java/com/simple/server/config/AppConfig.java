@@ -8,7 +8,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Service;
 
 import com.simple.server.domain.contract.IContract;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.mediators.Mediator;
 import com.simple.server.mediators.Subscriber;
 import com.simple.server.service.BusMsgService;
@@ -57,7 +57,7 @@ public class AppConfig {
     private LinkedBlockingQueue<IContract> queueAdminMsg = new LinkedBlockingQueue<>(10);
          
 	private Mediator mediator = new Mediator();    	        
-    private Status successStatus = new Status("202","Accepted");
+    private StatusMsg successStatus = new StatusMsg("202","Accepted");
      
     
     public LinkedBlockingQueue<IContract> getQueueAdminMsg() {  
@@ -116,7 +116,7 @@ public class AppConfig {
 		return readerService;
 	}
 
-	public Status getSuccessStatus() {
+	public StatusMsg getSuccessStatus() {
 		return successStatus;
 	}
 

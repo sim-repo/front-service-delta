@@ -28,7 +28,7 @@ public class BusMsgService  implements IMsgService{
 		msg.setServiceOutDatetime(new Date().toString());
 		msg.setServiceIdFrom(SERVICE_ID);		
 		String json = ObjectConverter.ObjectToJson(msg);		
-		System.out.println("front: "+json);
+		System.out.println("front::::: "+json);
 		msgChannel.send(MessageBuilder.withPayload( json ).setHeader(LOG_HEADER_NAME, msg.getClass().getSimpleName()).build());
 	}
 
@@ -41,7 +41,7 @@ public class BusMsgService  implements IMsgService{
 		msg.setServiceOutDatetime(new Date().toString());
 		msg.setServiceIdFrom(SERVICE_ID);			
 		String json = ObjectConverter.ObjectToJson(msg);				
-		System.out.println("front: "+json);
+		System.out.println("front:::::  "+json);
 		msgChannel.send(MessageBuilder.withPayload( json ).setHeader(LOG_HEADER_NAME, msgHeaderVal).build());						
 	}
 	

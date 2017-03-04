@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.simple.server.config.AppConfig;
 import com.simple.server.config.EndpointType;
 import com.simple.server.domain.contract.SorderMsg;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.domain.contract.BusReportMsg;
 import com.simple.server.domain.contract.test.Book;
 import com.simple.server.domain.contract.test.Dimension;

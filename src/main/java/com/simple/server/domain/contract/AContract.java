@@ -1,11 +1,14 @@
 package com.simple.server.domain.contract;
 
 import java.util.UUID;
+
+import org.apache.camel.spi.Required;
 import org.springframework.messaging.MessageChannel;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.simple.server.config.ContentType;
 import com.simple.server.config.EndpointType;
+import com.simple.server.config.EventType;
 import com.simple.server.config.OperationType;
 import com.simple.server.config.RoleType;
 
@@ -17,6 +20,10 @@ public abstract class AContract implements IContract{
 	protected String clazz;
 	
 	protected UUID juuid;
+	
+	protected EventType eventId;
+	
+	protected EndpointType senderId;
 	
 	protected EndpointType endPointId;
 	
@@ -54,6 +61,25 @@ public abstract class AContract implements IContract{
 	@Override
 	public void setJuuid(UUID juuid) {
 		this.juuid = juuid;
+	}
+		
+	@Override
+	public EventType getEventId() {
+		return eventId;
+	}
+	
+	@Override
+	public void setEventId(EventType eventId) {
+		this.eventId = eventId;
+	}
+	
+
+	public EndpointType getSenderId() {
+		return senderId;
+	}
+
+	public void setSenderId(EndpointType senderId) {
+		this.senderId = senderId;
 	}
 
 	@Override

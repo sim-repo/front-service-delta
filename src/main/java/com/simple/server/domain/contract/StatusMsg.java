@@ -1,6 +1,6 @@
 package com.simple.server.domain.contract;
 
-public class Status extends AContract{
+public class StatusMsg extends AContract{
 	
 	private static final long serialVersionUID = 1L;
 			
@@ -9,10 +9,10 @@ public class Status extends AContract{
 	private String errorId;
 	private String details;
 	
-	public Status() {
+	public StatusMsg() {
 	}
 
-	public Status(String code, String message) {
+	public StatusMsg(String code, String message) {
 		this.code = code;
 		this.message = message;
 	}
@@ -51,7 +51,7 @@ public class Status extends AContract{
 
 	@Override
 	public String getClazz() {
-		return Status.class.getSimpleName();
+		return this.getClass().getName();
 	}
 	
 	

@@ -55,6 +55,8 @@ public class LogBusMsgService{
 		instance.setServiceOutDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));		
 		instance.setJuuid(msg.getJuuid());
 		instance.setEndPointId(msg.getEndPointId());
+		instance.setSenderId(msg.getSenderId());
+		instance.setEventId(msg.getEventId());
 		instance.setResponseURI(msg.getResponseURI());
 		instance.setResponseContentType(msg.getResponseContentType());
 		instance.setResponseContractClass(msg.getResponseContractClass());		

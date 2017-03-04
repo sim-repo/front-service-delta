@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.simple.server.config.ContentType;
 import com.simple.server.config.EndpointType;
+import com.simple.server.config.EventType;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
@@ -25,6 +26,8 @@ public interface IContract extends Serializable{
 	UUID getJuuid();						
 		
 	EndpointType getEndPointId();
+	
+	EventType getEventId();
 	
 	String getResponseURI();
 		
@@ -60,4 +63,6 @@ public interface IContract extends Serializable{
 	void setEndPointId(EndpointType endPointId);
 	
 	void setJuuid(UUID juuid);
+	
+	void setEventId(EventType eventId);
 }

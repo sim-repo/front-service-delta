@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.simple.server.config.AppConfig;
 import com.simple.server.domain.contract.SorderMsg;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.statistics.time.Timing;
 
 @RestController
@@ -20,7 +20,7 @@ public class AsyncReplyController {
 	private AppConfig appConfig;
 	
 	@RequestMapping(value = "json/so", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status jsonSoReply(@RequestBody SorderMsg so) {		
+	public StatusMsg jsonSoReply(@RequestBody SorderMsg so) {		
 		try {																					
 					
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
@@ -33,7 +33,7 @@ public class AsyncReplyController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}
 	}
 	

@@ -20,7 +20,7 @@ import com.simple.server.config.EndpointType;
 import com.simple.server.config.OperationType;
 import com.simple.server.domain.contract.BusClassificator;
 import com.simple.server.domain.contract.SorderMsg;
-import com.simple.server.domain.contract.Status;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.domain.contract.BusTagTemplate;
 import com.simple.server.domain.contract.BusWriteMsg;
 import com.simple.server.statistics.time.Timing;
@@ -35,7 +35,7 @@ public class AsyncWriteController {
 	private AppConfig appConfig;
 		
 	@RequestMapping(value = "json/nav/so", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status jsonNavSo(@RequestBody SorderMsg so) {	
+	public StatusMsg jsonNavSo(@RequestBody SorderMsg so) {	
 		try {																	
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());					
 			so.setMethodHandler("async/post/json/nav/so");
@@ -49,22 +49,22 @@ public class AsyncWriteController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}
 	}
 	
 	@RequestMapping(value = "text/nav/so", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
-	public Status textNavSo(HttpServletRequest request, HttpServletResponse response) {	
+	public StatusMsg textNavSo(HttpServletRequest request, HttpServletResponse response) {	
 		try {																			
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}
 	}
 	
 	@RequestMapping(value = "json/nav/tag", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status jsonNavTag(@RequestBody BusTagTemplate tag) {	
+	public StatusMsg jsonNavTag(@RequestBody BusTagTemplate tag) {	
 		try {																									
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());					
 			tag.setMethodHandler("async/post/json/nav/tag");
@@ -78,12 +78,12 @@ public class AsyncWriteController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}
 	}	
 	
 	@RequestMapping(value = "json/classificator", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public Status home(@RequestBody BusClassificator classificator) {		
+	public StatusMsg home(@RequestBody BusClassificator classificator) {		
 		try {	
 			
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());					
@@ -98,7 +98,7 @@ public class AsyncWriteController {
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {	
 			e.printStackTrace();
-			return new Status("406", e.toString());
+			return new StatusMsg("406", e.toString());
 		}		
 	}
 	
