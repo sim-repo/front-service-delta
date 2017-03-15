@@ -23,6 +23,10 @@ public class SalesLineMsg extends AContract{
 	
 	protected String unitPrice = null;
 
+	protected String description  = null;
+	
+	protected String unitOfMeasure = null;
+	
 	
 	public String getClazz() {
 		return SalesLineMsg.class.getSimpleName();
@@ -92,13 +96,28 @@ public class SalesLineMsg extends AContract{
 		this.outerLineId = outerLineId;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getUnitOfMeasure() {
+		return unitOfMeasure;
+	}
+
+	public void setUnitOfMeasure(String unitOfMeasure) {
+		this.unitOfMeasure = unitOfMeasure;
+	}
+
 	@Override
 	public String toString() {
-		return "{outerLineId=" + outerLineId + ", itemNo=" + itemNo + ", quantity=" + quantity
-				+ ", variantCode=" + variantCode + ", lineDiscountPercent=" + lineDiscountPercent + ", lineAmount="
-				+ lineAmount + ", unitPrice=" + unitPrice + "}";
-	}		
+		return "SalesLineMsg [outerSorderId=" + outerSorderId + ", outerLineId=" + outerLineId + ", itemNo=" + itemNo
+				+ ", quantity=" + quantity + ", variantCode=" + variantCode + ", lineDiscountPercent="
+				+ lineDiscountPercent + ", lineAmount=" + lineAmount + ", unitPrice=" + unitPrice + ", description="
+				+ description + ", unitOfMeasure=" + unitOfMeasure + "]";
+	}
 
-	
-	
 }

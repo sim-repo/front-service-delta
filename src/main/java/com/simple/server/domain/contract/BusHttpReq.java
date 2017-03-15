@@ -2,13 +2,10 @@ package com.simple.server.domain.contract;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
-
 import com.simple.server.config.AppConfig;
 
 public class BusHttpReq extends AContract{
-
 	
 	String contextPath;
 	String contentType;

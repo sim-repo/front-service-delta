@@ -47,6 +47,8 @@ public abstract class AContract implements IContract{
 
 	protected String methodHandler;
 		
+	protected Boolean isDirectInsert = false; 
+	
 	protected Class<? extends ALogContract> logClass; 
 	
 	@JsonIgnore
@@ -195,6 +197,16 @@ public abstract class AContract implements IContract{
 	public void setServiceRoleFrom(String serviceRoleFrom) {
 		this.serviceRoleFrom = serviceRoleFrom;
 	}
+
+	@Override
+	public Boolean getIsDirectInsert() {
+		return isDirectInsert;
+	}
+	@Override
+	public void setIsDirectInsert(Boolean isDirectInsert) {
+		this.isDirectInsert = isDirectInsert;
+	}
+	
 	
 }
 

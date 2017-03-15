@@ -22,6 +22,8 @@ import com.simple.server.util.ObjectConverter;
 @Service("logBusMsgService")
 @Scope("singleton")
 public class LogBusMsgService{
+	
+	
 	final private static String LOG_HEADER_NAME = "log"; 
 	final private static String SERVICE_ID = "front"; 
 	

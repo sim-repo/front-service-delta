@@ -3,15 +3,15 @@ package com.simple.server.domain.contract;
 import java.io.Serializable;
 import java.util.UUID;
 
-
 import org.springframework.messaging.MessageChannel;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.simple.server.config.ContentType;
 import com.simple.server.config.EndpointType;
 import com.simple.server.config.EventType;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 
 @JsonPropertyOrder({"clazz"})
@@ -25,42 +25,47 @@ public interface IContract extends Serializable{
 	
 	UUID getJuuid();						
 		
-	EndpointType getEndPointId();
-	
 	EventType getEventId();
 	
 	String getResponseURI();
 		
 	String getServiceIdFrom();						
 	
-	String getMethodHandler();			
+	String getMethodHandler();	
+	
+	Boolean getIsDirectInsert();
+	
+	MessageChannel getChannel();	
+	
+	EndpointType getEndPointId();	
 	
 	String getServiceOutDatetime();
 	
-	MessageChannel getChannel();
+	String getResponseContractClass();
 	
 	ContentType getResponseContentType();
 		
-	String getResponseContractClass();
-		
-		
-	void setRequestInDatetime(String requestInDatetime);
 	
+		
 	void setResponseContractClass(String responseContractClass);
 	
 	void setResponseContentType(ContentType responseContentType);
 	
 	void setServiceOutDatetime(String serviceOutDatetime);
 	
+	void setRequestInDatetime(String requestInDatetime);
+	
 	void setMethodHandler(String methodHandler);
 			
 	void setServiceIdFrom(String serviceIdFrom);	
 	
-	void setChannel(MessageChannel channel);			
-	
-	void setResponseURI(String responseURI);	
+	void setIsDirectInsert(Boolean directInsert);
 	
 	void setEndPointId(EndpointType endPointId);
+	
+	void setChannel(MessageChannel channel);			
+	
+	void setResponseURI(String responseURI);		
 	
 	void setJuuid(UUID juuid);
 	

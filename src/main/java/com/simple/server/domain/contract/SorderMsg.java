@@ -75,7 +75,7 @@ public class SorderMsg extends AContract{
 	
 	protected String deliveryTimeFrom;
 		
-	protected String deliveryTimeTo;
+	protected String deliveryTimeTo;	
 	
 	protected String shipmentDate;
 	
@@ -86,6 +86,8 @@ public class SorderMsg extends AContract{
 	protected String sorderSource;
 	
 	protected String sorderDate;
+	
+	protected String postingDate;
 	
 	protected String comment;
 	
@@ -98,6 +100,24 @@ public class SorderMsg extends AContract{
 	protected String companyName;
 		
 	protected String deliveryComment;
+	
+	protected String type;
+	
+	protected String statusNav;
+	
+	protected String sorderAmount;
+	
+	protected String completeDate;
+	
+	protected String unloadPlaceId;
+	
+	protected String shipToCode;
+	
+	protected String activityCompany;
+	
+	protected String customerCardId;
+	
+	protected String sorderAmt;
 	
 	protected List<SalesLineMsg> slList = new ArrayList();
 	
@@ -459,6 +479,86 @@ public class SorderMsg extends AContract{
 		this.deliveryComment = deliveryComment;
 	}
 
+	public String getPostingDate() {
+		return postingDate;
+	}
+
+	public void setPostingDate(String postingDate) {
+		this.postingDate = postingDate;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getStatusNav() {
+		return statusNav;
+	}
+
+	public void setStatusNav(String statusNav) {
+		this.statusNav = statusNav;
+	}
+
+	public String getSorderAmount() {
+		return sorderAmount;
+	}
+
+	public void setSorderAmount(String sorderAmount) {
+		this.sorderAmount = sorderAmount;
+	}
+
+	public String getCompleteDate() {
+		return completeDate;
+	}
+
+	public void setCompleteDate(String completeDate) {
+		this.completeDate = completeDate;
+	}
+
+	public String getUnloadPlaceId() {
+		return unloadPlaceId;
+	}
+
+	public void setUnloadPlaceId(String unloadPlaceId) {
+		this.unloadPlaceId = unloadPlaceId;
+	}
+
+	public String getShipToCode() {
+		return shipToCode;
+	}
+
+	public void setShipToCode(String shipToCode) {
+		this.shipToCode = shipToCode;
+	}
+
+	public String getActivityCompany() {
+		return activityCompany;
+	}
+
+	public void setActivityCompany(String activityCompany) {
+		this.activityCompany = activityCompany;
+	}
+
+	public String getCustomerCardId() {
+		return customerCardId;
+	}
+
+	public void setCustomerCardId(String customerCardId) {
+		this.customerCardId = customerCardId;
+	}
+
+	public String getSorderAmt() {
+		return sorderAmt;
+	}
+
+	public void setSorderAmt(String sorderAmt) {
+		this.sorderAmt = sorderAmt;
+	}
+
 	public List<SalesLineMsg> getSlList() {
 		return slList;
 	}
@@ -467,11 +567,9 @@ public class SorderMsg extends AContract{
 		this.slList = slList;
 	}
 
-
-
 	@Override
 	public String toString() {
-		return "SalesOrder [outerCustomerId=" + outerCustomerId + ", outerSorderId=" + outerSorderId + ", outerUserID="
+		return "SorderMsg [outerCustomerId=" + outerCustomerId + ", outerSorderId=" + outerSorderId + ", outerUserID="
 				+ outerUserID + ", sorderNo=" + sorderNo + ", officialAgreementId=" + officialAgreementId
 				+ ", privateAgreementId=" + privateAgreementId + ", freewareAgreementId=" + freewareAgreementId
 				+ ", customerId=" + customerId + ", customerName=" + customerName + ", salespersonId=" + salespersonId
@@ -484,12 +582,16 @@ public class SorderMsg extends AContract{
 				+ kladrOffice + ", kladrAdditional=" + kladrAdditional + ", deliveryTimeFrom=" + deliveryTimeFrom
 				+ ", deliveryTimeTo=" + deliveryTimeTo + ", shipmentDate=" + shipmentDate + ", shipmentMethodCode="
 				+ shipmentMethodCode + ", preliminaryOrder=" + preliminaryOrder + ", sorderSource=" + sorderSource
-				+ ", sorderDate=" + sorderDate + ", comment=" + comment + ", wineShopCustomerNo=" + wineShopCustomerNo
-				+ ", simpleWaters=" + simpleWaters + ", paymentTerms=" + paymentTerms + ", slList=" + slList + "]";
+				+ ", sorderDate=" + sorderDate + ", postingDate=" + postingDate + ", comment=" + comment
+				+ ", wineShopCustomerNo=" + wineShopCustomerNo + ", simpleWaters=" + simpleWaters + ", paymentTerms="
+				+ paymentTerms + ", companyName=" + companyName + ", deliveryComment=" + deliveryComment + ", type="
+				+ type + ", statusNav=" + statusNav + ", sorderAmount=" + sorderAmount + ", completeDate="
+				+ completeDate + ", unloadPlaceId=" + unloadPlaceId + ", shipToCode=" + shipToCode
+				+ ", activityCompany=" + activityCompany + ", customerCardId=" + customerCardId + ", sorderAmt="
+				+ sorderAmt + ", slList=" + slList + "]";
 	}
-	
-	
 
+	
 }
 	
 	

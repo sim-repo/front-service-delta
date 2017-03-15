@@ -57,8 +57,7 @@ public class ClientSenderTask extends AbstractTask {
   
         for (IContract msg : list) {        	
         	Thread.currentThread().sleep(Timing.getTimeMaxSleep());		   
-        	msg.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));        	
-        	msg.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()) );        	
+        	msg.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));        	             	
         	appConfig.getLogBusMsgService().transformAndSend(appConfig.getChannelBusLog(), (AContract)msg);          	
         	appConfig.getBusMsgService().send(msg.getChannel(), msg.getMethodHandler(), msg);		
         }
