@@ -1,8 +1,31 @@
 package com.simple.server.config;
 
 public enum OperationType {
-	READ,
-	WRITE,
-	PUB,
-	SUB
+	
+	READ("READ"), WRITE("WRITE"), PUB("PUB"), SUB("SUB"), UNKNOWN("UNKNOWN");
+	
+	private final String value;
+
+	OperationType(String value) {
+		this.value = value;
+	}
+
+	public static OperationType fromValue(String value) {
+		if (value != null) {
+			for (OperationType operation : values()) {
+				if (operation.value.equals(value)) {
+					return operation;
+				}
+			}
+		}
+		return getDefault();
+	}
+
+	public String toValue() {
+		return value;
+	}
+
+	public static OperationType getDefault() {
+		return UNKNOWN;
+	}
 }

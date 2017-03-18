@@ -65,7 +65,7 @@ public class LogBusMsgService{
 		instance.setMethodHandler(msg.getMethodHandler());
 		instance.setServiceIdFrom(SERVICE_ID);			
 		instance.setMessageHeaderValue(msg.getClass().getSimpleName());
-		instance.setMessageBodyValue(msg.toString());				
+		//instance.setMessageBodyValue(msg.toString());				
 		return instance;
 	}
 

@@ -6,8 +6,6 @@ public class StatusMsg extends AContract{
 			
 	private String code;
 	private String message;
-	private String errorId;
-	private String details;
 	
 	public StatusMsg() {
 	}
@@ -31,22 +29,6 @@ public class StatusMsg extends AContract{
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getDetails() {
-		return details;
-	}
-
-	public void setDetails(String details) {
-		this.details = details;
-	}
-
-	public String getErrorId() {
-		return errorId;
-	}
-
-	public void setErrorId(String errorId) {
-		this.errorId = errorId;
 	}
 
 	@Override

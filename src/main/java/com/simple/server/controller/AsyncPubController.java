@@ -14,9 +14,13 @@ import com.simple.server.config.OperationType;
 import com.simple.server.domain.contract.BusPubMsg;
 import com.simple.server.domain.contract.BusSubMsg;
 import com.simple.server.domain.contract.BusWriteMsg;
-import com.simple.server.domain.contract.ErrMsg;
-import com.simple.server.domain.contract.SorderMsg;
+import com.simple.server.domain.contract.ConfirmMsg;
+import com.simple.server.domain.contract.ErrPubMsg;
+import com.simple.server.domain.contract.ErrSubMsg;
+import com.simple.server.domain.contract.IncomingBufferMsg;
 import com.simple.server.domain.contract.StatusMsg;
+import com.simple.server.domain.contract.SuccessPubMsg;
+import com.simple.server.domain.contract.SuccessSubMsg;
 import com.simple.server.domain.contract.UniMsg;
 import com.simple.server.statistics.time.Timing;
 
@@ -28,6 +32,7 @@ public class AsyncPubController {
 	@Autowired
 	private AppConfig appConfig;		
 		
+	
 	@RequestMapping(value = "json/pub/uni", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonPub(@RequestBody UniMsg msg) {		
 		try {				
@@ -37,7 +42,6 @@ public class AsyncPubController {
 			msg.setLogClass(BusPubMsg.class);
 			msg.setOperationType(OperationType.PUB);		
 			msg.setEventId(EventType.ANY);
-			System.out.println(msg);
 			appConfig.getQueueDirtyMsg().put(msg);					
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
@@ -45,79 +49,6 @@ public class AsyncPubController {
 			return new StatusMsg("406", e.toString());
 		}
 	}
-	
-	
-	@RequestMapping(value = "nav1/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonNav1Listener2(@RequestBody UniMsg msg) {		
-		try {				
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("nav1 catch ::::: "+msg);
-			msg.setMethodHandler("nav1/uni/listener");			
-			msg.setChannel(appConfig.getChannelBusBridge());
-			msg.setLogClass(BusWriteMsg.class);			
-			msg.setOperationType(OperationType.WRITE);
-			msg.setEndPointId(EndpointType.LOG);	
-			msg.setIsDirectInsert(true);
-		//	appConfig.getQueueDirtyMsg().put(msg);				
-			return appConfig.getSuccessStatus();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
-		}
-	}
-	
-	
-	@RequestMapping(value = "nav2/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonNav2Listener2(@RequestBody UniMsg msg) {		
-		try {				
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("nav2 catch ::::: " +msg);
-			msg.setMethodHandler("nav2/uni/listener");			
-			msg.setChannel(appConfig.getChannelBusBridge());
-			msg.setLogClass(BusWriteMsg.class);			
-			msg.setOperationType(OperationType.WRITE);
-			msg.setEndPointId(EndpointType.LOG);	
-			msg.setIsDirectInsert(true);
-		//	appConfig.getQueueDirtyMsg().put(msg);						
-			return appConfig.getSuccessStatus();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
-		}
-	}
-	
-	
-	
-	@RequestMapping(value = "nav/err", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonNavErr(@RequestBody ErrMsg msg) {		
-		try {				
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("nav err ::::: " +msg);			
-			//appConfig.getQueueDirtyMsg().put(msg);						
-			return appConfig.getSuccessStatus();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
-		}
-	}
-	
-	
-	@RequestMapping(value = "nav2/uni/mistake", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
-	public StatusMsg jsonNavErr2(@RequestBody ErrMsg msg) {		
-		try {				
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("nav mistake ::::: " +msg);			
-			//appConfig.getQueueDirtyMsg().put(msg);						
-			return appConfig.getSuccessStatus();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
-		}
-	}
-	
-	
-
-	
 	
 	
 	@RequestMapping(value = "json/sub/confirm", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -137,19 +68,82 @@ public class AsyncPubController {
 		}
 	}
 	
+	
+	
+	@RequestMapping(value = "nav/pub/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StatusMsg jsonNavPubSuccess(@RequestBody SuccessPubMsg msg) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			System.out.println("nav pub success catch ::::: " +msg);
+			msg.setMethodHandler("nav/pub/success");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.NAV);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+	
+	@RequestMapping(value = "nav/pub/err", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StatusMsg jsonNavPubErr(@RequestBody ErrPubMsg msg) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			System.out.println("nav pub err catch ::::: " +msg);
+			msg.setMethodHandler("nav/pub/err");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.NAV);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+	
+	
+	@RequestMapping(value = "nav/pub/confirm", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StatusMsg jsonConfirm(@RequestBody ConfirmMsg confirm) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			confirm.setMethodHandler("/async/json/sub/confirm");						
+			confirm.setChannel(appConfig.getChannelBusBridge());
+			confirm.setLogClass(BusSubMsg.class);
+			confirm.setOperationType(OperationType.WRITE);		
+			confirm.setEndPointId(EndpointType.NAV);
+			appConfig.getQueueDirtyMsg().put(confirm);					
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+
+	@RequestMapping(value = "oktell/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StatusMsg jsonOktellListener(@RequestBody UniMsg msg) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			System.out.println("oktell listener catch ::::: "+msg);
+			IncomingBufferMsg in = new IncomingBufferMsg();
+			in.copyFrom(msg);
 			
-	//*only for testing
-	//**	
-	@RequestMapping(value = "json/pub/sorder", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonSorderPub(@RequestBody SorderMsg sorder) {		
-		try {																										
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());					
-			sorder.setMethodHandler("/async/pub/json/sorder");			
-			sorder.setChannel(appConfig.getChannelBusBridge());
-			sorder.setEventId(EventType.CHANGE_CUST);
-			sorder.setLogClass(BusPubMsg.class);
-			sorder.setOperationType(OperationType.PUB);									
-			appConfig.getQueueDirtyMsg().put(sorder);					
+			in.setMethodHandler("oktell/uni/listener");			
+			in.setChannel(appConfig.getChannelBusBridge());
+			in.setLogClass(BusWriteMsg.class);			
+			in.setOperationType(OperationType.WRITE);
+			in.setEndPointId(EndpointType.OKTELL);	
+			in.setIsDirectInsert(false);
+			appConfig.getQueueDirtyMsg().put(in);				
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,17 +152,21 @@ public class AsyncPubController {
 	}
 	
 	
-	@RequestMapping(value = "nav1/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonNav1Listener(@RequestBody SorderMsg sorder) {		
+	@RequestMapping(value = "btx/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public StatusMsg jsonBtxListener(@RequestBody UniMsg msg) {		
 		try {				
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("client catch ");
-			sorder.setMethodHandler("nav1/listener");			
-			sorder.setChannel(appConfig.getChannelBusBridge());
-			sorder.setLogClass(BusWriteMsg.class);			
-			sorder.setOperationType(OperationType.WRITE);
-			sorder.setEndPointId(EndpointType.NAV);			
-			appConfig.getQueueDirtyMsg().put(sorder);				
+			System.out.println("btx listener catch ::::: " +msg);
+			IncomingBufferMsg in = new IncomingBufferMsg();
+			in.copyFrom(msg);
+			
+			in.setMethodHandler("btx/uni/listener");			
+			in.setChannel(appConfig.getChannelBusBridge());
+			in.setLogClass(BusWriteMsg.class);			
+			in.setOperationType(OperationType.WRITE);
+			in.setEndPointId(EndpointType.BTX);	
+			in.setIsDirectInsert(false);
+			appConfig.getQueueDirtyMsg().put(in);						
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -177,16 +175,38 @@ public class AsyncPubController {
 	}
 	
 	
-	@RequestMapping(value = "nav2/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonNav2Listener(@RequestBody SorderMsg sorder) {		
+	@RequestMapping(value = "oktell/sub/err", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public StatusMsg jsonOktellSubErr(@RequestBody ErrSubMsg msg) {		
 		try {				
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			sorder.setMethodHandler("nav2/listener");			
-			sorder.setChannel(appConfig.getChannelBusBridge());
-			sorder.setLogClass(BusWriteMsg.class);			
-			sorder.setOperationType(OperationType.WRITE);
-			sorder.setEndPointId(EndpointType.ONE);			
-			appConfig.getQueueDirtyMsg().put(sorder);				
+			System.out.println("oktell sub err catch ::::: " +msg);
+			msg.setMethodHandler("oktell/sub/err");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.OKTELL);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+	
+	@RequestMapping(value = "btx/sub/err", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public StatusMsg jsonBtxSubErr(@RequestBody ErrSubMsg msg) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			System.out.println("btx sub err catch ::::: " +msg);
+			msg.setMethodHandler("btx/sub/err");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.BTX);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -196,18 +216,39 @@ public class AsyncPubController {
 	
 	
 	
-	@RequestMapping(value = "publisher/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonPubListener(@RequestBody StatusMsg status) {		
-		try {																								
+	
+	@RequestMapping(value = "oktell/sub/success", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public StatusMsg jsonOktellSubSuccess(@RequestBody SuccessSubMsg msg) {		
+		try {				
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			System.out.println("publisher/listener catch !!!!!!!!!!!!!!! ");			
-			status.setMethodHandler("publisher/listener");			
-			status.setChannel(appConfig.getChannelBusBridge());
-			status.setLogClass(BusWriteMsg.class);			
-			status.setOperationType(OperationType.WRITE);
-			status.setEndPointId(EndpointType.NAV);			
-							
-			//appConfig.getQueueDirtyMsg().put(status);					
+			System.out.println("oktell sub success catch ::::: " +msg);
+			msg.setMethodHandler("oktell/sub/success");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.OKTELL);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+	
+	@RequestMapping(value = "btx/sub/success", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public StatusMsg jsonBtxSubSuccess(@RequestBody SuccessSubMsg msg) {		
+		try {				
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
+			System.out.println("btx sub success catch ::::: " +msg);
+			msg.setMethodHandler("btx/sub/success");			
+			msg.setChannel(appConfig.getChannelBusBridge());
+			msg.setLogClass(BusWriteMsg.class);			
+			msg.setOperationType(OperationType.WRITE);
+			msg.setEndPointId(EndpointType.BTX);	
+			msg.setIsDirectInsert(true);
+			appConfig.getQueueDirtyMsg().put(msg);						
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
 			e.printStackTrace();

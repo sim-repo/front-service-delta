@@ -70,4 +70,6 @@ public interface IContract extends Serializable{
 	void setJuuid(UUID juuid);
 	
 	void setEventId(EventType eventId);
+	
+	void copyFrom(IContract msg) throws Exception;
 }
