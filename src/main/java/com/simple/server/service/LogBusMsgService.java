@@ -29,8 +29,7 @@ public class LogBusMsgService{
 	
 	public void transformAndSend(MessageChannel msgChannel, AContract msg) throws Exception {		
 		IContract message = newLogMsg(msg);												
-		String json = ObjectConverter.ObjectToJson(message);
-	//	System.out.println(json);
+		String json = ObjectConverter.objectToJson(message);
 		msgChannel.send( MessageBuilder.withPayload( json ).setHeader(LOG_HEADER_NAME, msg.getClass().getSimpleName()).build() );					
 	}
 
@@ -38,15 +37,15 @@ public class LogBusMsgService{
 	public void sendHttpRequest(MessageChannel msgChannel, HttpServletRequest request) throws Exception {			
 		BusHttpReq logHttpReq = new BusHttpReq();
 		logHttpReq.copyFrom(request);
-		logHttpReq.setJuuid(UUID.randomUUID());						
-		String json = ObjectConverter.ObjectToJson(logHttpReq);		
+		logHttpReq.setJuuid(UUID.randomUUID().toString());						
+		String json = ObjectConverter.objectToJson(logHttpReq);		
 		msgChannel.send( MessageBuilder.withPayload( json ).setHeader(LOG_HEADER_NAME, logHttpReq.getClass().getSimpleName()).build() );					
 	}
 	
 	
 	public void sendAsIs(MessageChannel msgChannel, IContract msg) throws Exception {			
-		msg.setJuuid(UUID.randomUUID());						
-		String json = ObjectConverter.ObjectToJson(msg);		
+		msg.setJuuid(UUID.randomUUID().toString());						
+		String json = ObjectConverter.objectToJson(msg);		
 		msgChannel.send( MessageBuilder.withPayload( json ).setHeader(LOG_HEADER_NAME, msg.getClass().getSimpleName()).build() );					
 	}
 	

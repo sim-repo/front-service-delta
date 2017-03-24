@@ -44,7 +44,7 @@ public class AsyncWriteController {
 			so.setEndPointId(EndpointType.NAV);
 			so.setOperationType(OperationType.WRITE);
 			so.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
-			so.setJuuid(UUID.randomUUID());			
+			so.setJuuid(UUID.randomUUID().toString());			
 			appConfig.getQueueDirtyMsg().put(so);	
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class AsyncWriteController {
 			tag.setEndPointId(EndpointType.LOG);
 			tag.setOperationType(OperationType.WRITE);
 			tag.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
-			tag.setJuuid(UUID.randomUUID());						
+			tag.setJuuid(UUID.randomUUID().toString());						
 			appConfig.getQueueDirtyMsg().put(tag);	
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
@@ -93,7 +93,7 @@ public class AsyncWriteController {
 			classificator.setEndPointId(EndpointType.LOG);
 			classificator.setOperationType(OperationType.WRITE);
 			classificator.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
-			classificator.setJuuid(UUID.randomUUID());									
+			classificator.setJuuid(UUID.randomUUID().toString());									
 			appConfig.getQueueDirtyMsg().put(classificator);
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {	

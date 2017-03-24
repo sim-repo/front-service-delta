@@ -22,13 +22,10 @@
     <int:channel id="businessTopicChannel"/>  
             	
     <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="http://localhost:8161"/>
     </bean>
 	
     <int-jms:outbound-channel-adapter channel="businessTopicChannel"
                                       destination-name="front.common.topic"
                                       pub-sub-domain="true" />
-                                      
-
-	
 </beans>		    		

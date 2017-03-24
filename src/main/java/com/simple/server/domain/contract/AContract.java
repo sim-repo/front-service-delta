@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import org.springframework.messaging.MessageChannel;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,10 +23,10 @@ public abstract class AContract implements IContract {
 	
 	protected static final long serialVersionUID = 1L;
 	
-	protected String clazz;	
-	protected UUID juuid;	
-	protected String eventId;	
-		
+	protected String clazz;		
+	protected String juuid;		
+	protected String eventId;		
+	
 	protected String senderId;	
 	protected String endPointId;	
 	
@@ -42,7 +45,7 @@ public abstract class AContract implements IContract {
 	protected String serviceOutDatetime;	
 	protected String requestInDatetime;			
 	protected String responseURI;	
-	protected ContentType responseContentType;	
+	protected String responseContentType;	
 	protected String responseContractClass;
 	protected String methodHandler;		
 	protected Boolean isDirectInsert = false; 	
@@ -58,34 +61,38 @@ public abstract class AContract implements IContract {
 	
 	
 	@JsonIgnore
+	@XmlTransient 
 	protected MessageChannel channel;
 	
 	
 	@Override
-	public UUID getJuuid() {	
+	public String getJuuid() {	
 		return juuid;
 	}
 	
+	@XmlElement(name = "juuid")
 	@Override
-	public void setJuuid(UUID juuid) {
+	public void setJuuid(String juuid) {
 		this.juuid = juuid;
 	}
-		
+
 	@Override
 	public EventType getEventId() {
 		return EventType.fromValue(eventId);
 	}
 	
+	@XmlElement(name = "eventId")
 	@Override
 	public void setEventId(EventType eventId) {
 		this.eventId = eventId.toValue();
 	}
 	
-
+	
 	public EndpointType getSenderId() {
 		return EndpointType.fromValue(senderId);
 	}
 
+	@XmlElement(name = "senderId")
 	public void setSenderId(EndpointType senderId) {
 		this.senderId = senderId.toValue();
 	}
@@ -128,11 +135,11 @@ public abstract class AContract implements IContract {
 	
 	@Override
 	public ContentType getResponseContentType() {
-		return responseContentType;
+		return ContentType.fromValue(responseContentType);
 	}
 	
 	public void setResponseContentType(ContentType responseContentType){
-		this.responseContentType = responseContentType;
+		this.responseContentType = responseContentType.toValue();
 	}
 
 	@Override
@@ -146,6 +153,7 @@ public abstract class AContract implements IContract {
 	}
 
 	@Override
+	@XmlTransient 
 	public MessageChannel getChannel() {
 		return channel;
 	}

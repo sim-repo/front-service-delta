@@ -23,7 +23,7 @@ public interface IContract extends Serializable{
 	@JsonGetter("clazz")
 	String getClazz();
 	
-	UUID getJuuid();						
+	String getJuuid();						
 		
 	EventType getEventId();
 	
@@ -67,7 +67,7 @@ public interface IContract extends Serializable{
 	
 	void setResponseURI(String responseURI);		
 	
-	void setJuuid(UUID juuid);
+	void setJuuid(String juuid);
 	
 	void setEventId(EventType eventId);
 	

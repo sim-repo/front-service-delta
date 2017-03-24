@@ -1,6 +1,7 @@
 package com.simple.server.domain.contract;
 
 public class IncomingBufferMsg extends AContract{
+	
 	@Override
 	public String getClazz() {
 		return this.getClass().getName();
@@ -14,5 +15,13 @@ public class IncomingBufferMsg extends AContract{
 		}
 		this.setEventId(_msg.getEventId());
 		this.setJuuid(_msg.getJuuid());
+	}
+	
+	
+	public void copyFrom(UniMinMsg _msg) throws Exception{
+				
+		this.setMessageBodyValue(_msg.getBody());					
+		this.setEventId(_msg.getEventId());
+		this.setJuuid(_msg.getJuuid().toString());
 	}
 }

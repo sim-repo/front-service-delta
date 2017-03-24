@@ -112,12 +112,32 @@
 		    <version>${jackson-version}</version>
 		</dependency>
 		
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		    <artifactId>jackson-dataformat-xml</artifactId>
+		    <version>${jackson-version}</version>
+		</dependency>
+		
+		
 		<!-- Org.Json -->
 		<dependency>
 		    <groupId>org.json</groupId>
 		    <artifactId>json</artifactId>
 		    <version>20160810</version>
 		</dependency>
+		
+		<!-- JaxB -->
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.10</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.2.10</version>
+        </dependency>
 		
 		<!-- Joda Time -->
 		<dependency>

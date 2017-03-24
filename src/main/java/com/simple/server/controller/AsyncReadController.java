@@ -41,7 +41,7 @@ public class AsyncReadController {
 			so.setMethodHandler("/async/get/json/nav/so");			
 			so.setChannel(appConfig.getChannelBusBridge());
 			so.setLogClass(BusReadMsg.class);
-			so.setJuuid(UUID.randomUUID());			
+			so.setJuuid(UUID.randomUUID().toString());			
 			appConfig.getQueueDirtyMsg().put(so);					
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
@@ -60,7 +60,7 @@ public class AsyncReadController {
 			req.setOperationType(OperationType.READ);
 			req.setChannel(appConfig.getChannelBusBridge());
 			req.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
-			req.setJuuid(UUID.randomUUID());						
+			req.setJuuid(UUID.randomUUID().toString());						
 			appConfig.getQueueDirtyMsg().put(req);					
 			return appConfig.getSuccessStatus();
 		} catch (Exception e) {
