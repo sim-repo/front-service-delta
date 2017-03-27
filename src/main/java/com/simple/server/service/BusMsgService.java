@@ -8,7 +8,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Service;
 
 import com.simple.server.domain.contract.IContract;
-import com.simple.server.domain.contract.SorderMsg;
 import com.simple.server.util.ObjectConverter;
 
 @Service("busMsgService")

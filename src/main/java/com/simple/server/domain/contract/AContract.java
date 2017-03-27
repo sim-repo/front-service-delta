@@ -14,7 +14,6 @@ import com.simple.server.config.AppConfig;
 import com.simple.server.config.ContentType;
 import com.simple.server.config.EndpointType;
 import com.simple.server.config.ErrorType;
-import com.simple.server.config.EventType;
 import com.simple.server.config.OperationType;
 import com.simple.server.config.RoleType;
 
@@ -77,14 +76,14 @@ public abstract class AContract implements IContract {
 	}
 
 	@Override
-	public EventType getEventId() {
-		return EventType.fromValue(eventId);
+	public String getEventId() {
+		return eventId;
 	}
 	
 	@XmlElement(name = "eventId")
 	@Override
-	public void setEventId(EventType eventId) {
-		this.eventId = eventId.toValue();
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
 	}
 	
 	
@@ -337,8 +336,8 @@ public abstract class AContract implements IContract {
 		
 		if(this.getSubscriberId().equals(EndpointType.UNKNOWN))
 			this.setSubscriberId(msg.getSubscriberId());
-		
-		if(this.getEventId().equals(EventType.UNKNOWN))
+				
+		if(this.getEventId()==null || this.getEventId().equals(""))
 			this.setEventId(msg.getEventId());
 		
 		if(this.getResponseURI() == null)

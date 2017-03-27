@@ -112,7 +112,7 @@
       <beans:bean class="com.simple.server.controller.interceptor.Interceptor" />
 	</mvc:interceptors> 
 	
-	<beans:import resource="publish-scheme.xml"/>
+	<beans:import resource="subscribe-settings.xml"/>	
 	<beans:import resource="outbound-gateway-scheme.xml"/>
 	<beans:import resource="jms-invoke-settings.xml"/>
 	<beans:import resource="jmx-settings.xml"/>

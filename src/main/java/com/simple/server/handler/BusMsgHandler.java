@@ -3,11 +3,15 @@ package com.simple.server.handler;
 import org.springframework.stereotype.Service;
 
 @Service("busMsgHandler")
-public class BusMsgHandler implements MsgHandler{
+public class BusMsgHandler extends AbstractMsgHandler{
 
-	@Override
-	public void handleJsonMessage(String json) throws Exception {
-		
+
+	public void handleBusJsonMsg(String json) throws Exception {				
+		System.out.println("front-service:::::handleBusJsonMsg "+ json);		
+	}
+
+	public void handleBusXmlMsg(String xml) throws Exception {
+		// TODO Auto-generated method stub
 	}
 	
 }

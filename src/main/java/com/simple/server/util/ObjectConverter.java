@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import com.simple.server.domain.contract.AContract;
-import com.simple.server.tasks.AbstractTask;
 
 public class ObjectConverter {
 	private ObjectConverter(){}

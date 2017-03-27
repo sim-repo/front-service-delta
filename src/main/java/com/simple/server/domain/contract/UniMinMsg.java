@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.simple.server.config.ContentType;
-import com.simple.server.config.EventType;
 
 
 @JsonAutoDetect
@@ -32,11 +31,11 @@ public class UniMinMsg {
 	public void setJuuid(String juuid) {
 		this.juuid = juuid;
 	}
-	public EventType getEventId() {
-		return EventType.valueOf(eventId);
+	public String getEventId() {
+		return eventId;
 	}
-	public void setEventId(EventType eventId) {
-		this.eventId = eventId.toValue();
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
 	}
 	public String getBody() {
 		return body;
