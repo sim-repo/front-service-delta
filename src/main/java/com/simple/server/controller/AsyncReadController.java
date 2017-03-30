@@ -1,7 +1,6 @@
 package com.simple.server.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +14,11 @@ import com.simple.server.config.AppConfig;
 import com.simple.server.config.EndpointType;
 import com.simple.server.config.OperationType;
 import com.simple.server.domain.contract.BusReadMsg;
-import com.simple.server.domain.contract.BusWriteMsg;
-import com.simple.server.domain.contract.CustMsg;
 import com.simple.server.domain.contract.SorderMsg;
 import com.simple.server.domain.contract.BusReportMsg;
 import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.statistics.time.Timing;
+import com.simple.server.util.DateTimeConverter;
 
 
 
@@ -59,7 +57,7 @@ public class AsyncReadController {
 			req.setEndPointId(EndpointType.NAV);
 			req.setOperationType(OperationType.READ);
 			req.setChannel(appConfig.getChannelBusBridge());
-			req.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
+			req.setRequestInDatetime(DateTimeConverter.getCurDate());
 			req.setJuuid(UUID.randomUUID().toString());						
 			appConfig.getQueueDirtyMsg().put(req);					
 			return appConfig.getSuccessStatus();

@@ -28,11 +28,11 @@
     <int:channel id="srvPerfomTopicChannel" />	  
                         
     <int-jms:message-driven-channel-adapter id="messageDrivenAdapter"
-    	channel="srvHealthTopicChannel" destination-name="srv.health.topic"
+    	channel="srvHealthTopicChannel" destination-name="amq.health.topic"
     	pub-sub-domain="true" receive-timeout="1" />
 
     <int-jms:message-driven-channel-adapter id="messageDrivenAdapter"
-    	channel="srvPerfomTopicChannel" destination-name="srv.perfomance.topic" 
+    	channel="srvPerfomTopicChannel" destination-name="amq.perfomance.topic" 
     	pub-sub-domain="true" receive-timeout="1" auto-startup="true" />
 
 	<int:service-activator input-channel="jsonChannel"

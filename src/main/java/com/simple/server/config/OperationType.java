@@ -2,7 +2,7 @@ package com.simple.server.config;
 
 public enum OperationType {
 	
-	READ("READ"), WRITE("WRITE"), PUB("PUB"), SUB("SUB"), UNKNOWN("UNKNOWN");
+	READ("READ"), WRITE("WRITE"), PUB("PUB"), SUB("SUB"), MON_START("MON_START"), MON_REP("MON_REP"), UNKNOWN("UNKNOWN");
 	
 	private final String value;
 

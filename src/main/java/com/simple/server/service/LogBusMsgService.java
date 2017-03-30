@@ -16,6 +16,7 @@ import com.simple.server.domain.contract.AContract;
 import com.simple.server.domain.contract.ALogContract;
 import com.simple.server.domain.contract.BusHttpReq;
 import com.simple.server.domain.contract.IContract;
+import com.simple.server.util.DateTimeConverter;
 import com.simple.server.util.ObjectConverter;
 
 
@@ -53,7 +54,7 @@ public class LogBusMsgService{
 	public ALogContract newLogMsg(AContract msg) throws Exception{		
 		
 		ALogContract instance = msg.getLogClass().newInstance();		
-		instance.setServiceOutDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));		
+		instance.setServiceOutDatetime(DateTimeConverter.getCurDate());		
 		instance.setJuuid(msg.getJuuid());
 		instance.setEndPointId(msg.getEndPointId());
 		instance.setSenderId(msg.getSenderId());

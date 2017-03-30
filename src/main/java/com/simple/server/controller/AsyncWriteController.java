@@ -24,6 +24,7 @@ import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.domain.contract.BusTagTemplate;
 import com.simple.server.domain.contract.BusWriteMsg;
 import com.simple.server.statistics.time.Timing;
+import com.simple.server.util.DateTimeConverter;
 
 
 @SuppressWarnings("static-access")
@@ -43,7 +44,7 @@ public class AsyncWriteController {
 			so.setLogClass(BusWriteMsg.class);
 			so.setEndPointId(EndpointType.NAV);
 			so.setOperationType(OperationType.WRITE);
-			so.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
+			so.setRequestInDatetime(DateTimeConverter.getCurDate());
 			so.setJuuid(UUID.randomUUID().toString());			
 			appConfig.getQueueDirtyMsg().put(so);	
 			return appConfig.getSuccessStatus();
@@ -72,7 +73,7 @@ public class AsyncWriteController {
 			tag.setLogClass(BusWriteMsg.class);
 			tag.setEndPointId(EndpointType.LOG);
 			tag.setOperationType(OperationType.WRITE);
-			tag.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
+			tag.setRequestInDatetime(DateTimeConverter.getCurDate());
 			tag.setJuuid(UUID.randomUUID().toString());						
 			appConfig.getQueueDirtyMsg().put(tag);	
 			return appConfig.getSuccessStatus();
@@ -92,7 +93,7 @@ public class AsyncWriteController {
 			classificator.setLogClass(BusWriteMsg.class);
 			classificator.setEndPointId(EndpointType.LOG);
 			classificator.setOperationType(OperationType.WRITE);
-			classificator.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));
+			classificator.setRequestInDatetime(DateTimeConverter.getCurDate());
 			classificator.setJuuid(UUID.randomUUID().toString());									
 			appConfig.getQueueDirtyMsg().put(classificator);
 			return appConfig.getSuccessStatus();

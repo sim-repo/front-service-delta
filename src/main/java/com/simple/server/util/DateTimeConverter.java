@@ -1,5 +1,8 @@
 package com.simple.server.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
@@ -7,6 +10,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.DateTimeFormatterBuilder;
 import org.joda.time.format.DateTimeParser;
+
+import com.simple.server.config.AppConfig;
 
 
 public class DateTimeConverter {
@@ -41,6 +46,10 @@ public class DateTimeConverter {
 		        })
 		        .toFormatter();
 		
+	
+	public static String getCurDate(){
+		return new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime());
+	}
 			
 	public static String dateToNavFormat(String sDate){
 		LocalDate localDate = DATE_FORMATTER.parseLocalDate(sDate);
@@ -54,8 +63,7 @@ public class DateTimeConverter {
 		if(localTime.toString(DateTimeFormat.forPattern("HHmmss")).equals(NAV_DEFAULT_TIME)){
 			dateTime = new DateTime(1753, 1, 1, localTime.getHourOfDay(),localTime.getMinuteOfHour(),localTime.getSecondOfMinute());					
 		}
-		else{
-			
+		else{			
 			dateTime = new DateTime(1754, 1, 1, localTime.getHourOfDay(),localTime.getMinuteOfHour(),localTime.getSecondOfMinute());
 		}
 		return dateTime.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));

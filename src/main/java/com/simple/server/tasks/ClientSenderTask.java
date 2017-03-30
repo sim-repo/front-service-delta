@@ -16,6 +16,7 @@ import com.simple.server.domain.contract.AContract;
 import com.simple.server.domain.contract.IContract;
 import com.simple.server.mediators.CommandType;
 import com.simple.server.statistics.time.Timing;
+import com.simple.server.util.DateTimeConverter;
 
 @SuppressWarnings("static-access")
 @Service("ClientSenderTask")
@@ -57,7 +58,7 @@ public class ClientSenderTask extends AbstractTask {
   
         for (IContract msg : list) {        	
         	Thread.currentThread().sleep(Timing.getTimeMaxSleep());		   
-        	msg.setRequestInDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));        	             	
+        	msg.setRequestInDatetime(DateTimeConverter.getCurDate());        	             	
         	appConfig.getLogBusMsgService().transformAndSend(appConfig.getChannelBusLog(), (AContract)msg);          	
         	appConfig.getBusMsgService().send(msg.getChannel(), msg.getMethodHandler(), msg);		
         }

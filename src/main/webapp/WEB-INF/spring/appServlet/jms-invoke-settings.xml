@@ -9,20 +9,22 @@
         <property name="trustAllPackages" value="true"/>
     </bean>
 
-    <bean id="syncQueue2" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="mmm2"/>
+  	<bean id="syncBridge" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="amq.bridge.sync.queue"/>
     </bean>
     
-    <bean id="syncQueue" class="org.apache.activemq.command.ActiveMQQueue">
-        <constructor-arg value="mmm"/>
+
+    <bean id="syncLog" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="amq.log.sync.queue"/>
     </bean>
     
+   
 
 	<bean id="remoteService"
             class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
         <property name="serviceInterface" value="com.simple.server.service.remote.IRemoteService"/>
         <property name="connectionFactory" ref="syncConnectionFactory"/>
-        <property name="queue" ref="syncQueue2"/>
+        <property name="queue" ref="syncBridge"/>
     </bean>
 	
 	
@@ -30,6 +32,6 @@
            class="org.springframework.jms.remoting.JmsInvokerProxyFactoryBean">
        <property name="serviceInterface" value="com.simple.server.service.remote.IRemoteLogService"/>
        <property name="connectionFactory" ref="syncConnectionFactory"/>
-       <property name="queue" ref="syncQueue"/>
+       <property name="queue" ref="syncLog"/>
     </bean>
 </beans>

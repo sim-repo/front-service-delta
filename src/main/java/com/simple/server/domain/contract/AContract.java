@@ -16,6 +16,7 @@ import com.simple.server.config.EndpointType;
 import com.simple.server.config.ErrorType;
 import com.simple.server.config.OperationType;
 import com.simple.server.config.RoleType;
+import com.simple.server.util.DateTimeConverter;
 
 @JsonAutoDetect
 public abstract class AContract implements IContract {
@@ -321,7 +322,7 @@ public abstract class AContract implements IContract {
 	public void copyFrom(IContract _msg) throws Exception{
 		AContract msg = (AContract)_msg;
 		
-		this.setServiceOutDatetime(new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime()));		
+		this.setServiceOutDatetime(DateTimeConverter.getCurDate());		
 		if(this.getJuuid() == null)
 			this.setJuuid(msg.getJuuid());		
 		

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.servlet.http.HttpServletRequest;
 import com.simple.server.config.AppConfig;
+import com.simple.server.util.DateTimeConverter;
 
 public class BusHttpReq extends AContract{
 	
@@ -46,7 +47,7 @@ public class BusHttpReq extends AContract{
 		 this.serverName	=	httpRequest.getServerName();
 		 this.serverPort	=	httpRequest.getServerPort()+"";		 
 		 this.requestURL	=	httpRequest.getRequestURI();
-		 this.requestInDatetime = new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime());
+		 this.requestInDatetime = DateTimeConverter.getCurDate();
 	}
 
 	public String getContextPath() {
