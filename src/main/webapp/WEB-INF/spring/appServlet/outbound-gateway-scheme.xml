@@ -37,15 +37,11 @@
 	
 		
 	<bean id="blq" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="business.log.queue"/>
-	</bean>
-	
-	<bean id="slq" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="service.log.queue"/>
+		<constructor-arg value="amq.log.async.bus.queue"/>
 	</bean>
 	
 	<bean id="bbq" class="org.apache.activemq.command.ActiveMQQueue">
-		<constructor-arg value="business.writer.queue"/>
+		<constructor-arg value="amq.bridge.async.bus.queue"/>
 	</bean>
 
 	<int-jms:outbound-gateway id="businessBridgeGateway" 
@@ -60,11 +56,6 @@
 		connection-factory="outboundConnectionFactory" async="true"
 		requires-reply="false" receive-timeout="1" reply-timeout="1" />
 	
-	<int-jms:outbound-gateway id="serviceLogGateway" 
-		request-channel="channelSrvLog"
-		request-destination="slq"
-		connection-factory="outboundConnectionFactory" async="true"
-		requires-reply="false" receive-timeout="1" reply-timeout="1" />
 			
 	
 </beans>		

@@ -50,7 +50,14 @@ public class DateTimeConverter {
 	public static String getCurDate(){
 		return new SimpleDateFormat(AppConfig.DATEFORMAT).format(Calendar.getInstance().getTime());
 	}
-			
+	
+	public static String dateToSQLFormat(String sDate){
+		LocalDate localDate = DATE_FORMATTER.parseLocalDate(sDate);
+		DateTime dateTime = new DateTime(localDate.getYear(),localDate.getMonthOfYear(),localDate.getDayOfMonth(),0,0,0);		
+		return dateTime.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));				
+	}
+
+
 	public static String dateToNavFormat(String sDate){
 		LocalDate localDate = DATE_FORMATTER.parseLocalDate(sDate);
 		DateTime dateTime = new DateTime(localDate.getYear(),localDate.getMonthOfYear(),localDate.getDayOfMonth(),0,0,0);		
