@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 public class SrvMsgHandler extends AbstractMsgHandler{
 	
 
-	public void handleSrvJsonMsg(String json) throws Exception {
-		System.out.println("front::::handleSrvJsonMsg "+json);
+	public void handleSrvJsonMsg(String json) throws Exception {		
 	}	
 
 

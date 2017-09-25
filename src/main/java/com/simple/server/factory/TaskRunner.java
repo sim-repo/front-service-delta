@@ -21,6 +21,7 @@ import com.simple.server.mediators.Mediator;
 import com.simple.server.mediators.ParameterType;
 import com.simple.server.tasks.AbstractTask;
 import com.simple.server.tasks.DispatcherTask;
+import com.simple.server.tasks.LoadConfigTask;
 import com.simple.server.tasks.ClientSenderTask;
 import com.simple.server.tasks.LogSenderTask;
 import com.simple.server.tasks.Task;
@@ -101,7 +102,7 @@ public class TaskRunner  {
         		newRunTask(appConfig.getMediator(), DispatcherTask.class, 2);
         		newRunTask(appConfig.getMediator(), ClientSenderTask.class, 2);  
         		newRunTask(appConfig.getMediator(), LogSenderTask.class, 2);
-        		
+        		newRunTask(appConfig.getMediator(), LoadConfigTask.class, 1);
         		//appConfig.getPerfomancerStat().addStatToTask(Processing.class);
                 // Timing timing = new Timing(appConfig.getPerfomancerStat());        		         		
             	appConfig.getMediator().wakeupAll();

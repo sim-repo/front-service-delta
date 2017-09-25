@@ -27,7 +27,7 @@ public class SyncUtilController {
 
 		String res = null;
 		try {											
-			res = ObjectConverter.jsonToXml(json);						
+			res = ObjectConverter.jsonToXml(json,true);						
 		}
 		catch(Exception e){			
 			e.printStackTrace();

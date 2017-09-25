@@ -301,12 +301,12 @@ public abstract class AContract implements IContract {
 		this.loggerId = loggerId;
 	}
 
-	public ErrorType getErrorId() {
-		return ErrorType.fromValue(errorId);
+	public String getErrorId() {
+		return errorId;
 	}
 
-	public void setErrorId(ErrorType errorId) {
-		this.errorId = errorId.toValue();
+	public void setErrorId(String errorId) {
+		this.errorId = errorId;
 	}
 
 	public String getDetails() {

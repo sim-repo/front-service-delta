@@ -51,7 +51,7 @@ public class LogSenderTask extends AbstractTask {
              
         Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
         appConfig.getQueueAdminMsg().drainTo(list, MAX_NUM_ELEMENTS);  
-                 
+               
         for (IContract msg : list) {        	
         	Thread.currentThread().sleep(Timing.getTimeMaxSleep());	     	        	
         	appConfig.getLogBusMsgService().sendAsIs(appConfig.getChannelBusLog(), msg);          		

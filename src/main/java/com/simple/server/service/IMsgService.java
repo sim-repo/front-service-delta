@@ -1,14 +1,15 @@
 package com.simple.server.service;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.simple.server.domain.contract.IContract;
-import com.simple.server.domain.contract.StatusMsg;
 
 
 public interface IMsgService {
-	public void send(MessageChannel msgChannel, IContract msg) throws Exception;	
+	void send(MessageChannel msgChannel, IContract msg) throws Exception;	
 	void send(MessageChannel msgChannel, String msgHeaderVal, IContract msg) throws Exception;
-	public void pushQueue(MessageChannel msgChannel, IContract msg) throws Exception;
-	
+	void pushQueue(MessageChannel msgChannel, IContract msg) throws Exception;
+	@ResponseBody ResponseEntity<String> retranslate(String key, String params);
 }

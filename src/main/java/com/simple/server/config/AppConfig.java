@@ -1,13 +1,16 @@
 package com.simple.server.config;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.stereotype.Service;
 
 import com.simple.server.domain.contract.IContract;
+import com.simple.server.domain.contract.RedirectRouting;
 import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.mediators.Mediator;
 import com.simple.server.mediators.Subscriber;
@@ -15,16 +18,29 @@ import com.simple.server.service.BusMsgService;
 import com.simple.server.service.IReaderService;
 import com.simple.server.service.LogBusMsgService;
 import com.simple.server.service.ReaderServiceImpl;
+import com.simple.server.service.remote.IRemoteLogService;
+import com.simple.server.service.remote.IRemoteService;
 import com.simple.server.statistics.PerfomancerStat;
 
 
 @Service("appConfig")
 @Scope("singleton")
 public class AppConfig {	
-			
+	
+	
+	public final static String ACC = "jservice";
+	public final static String PSW = "j123Service";
+	public final static String DOMEN = "SIMPLE";
+	public final static String WORKSTATION = "MSK10WEBSVC2";
+
 	public final static String DATEFORMAT = "dd.MM.yyyy HH:mm:ss";
 	
 	private Subscriber subscriber = new Subscriber();
+	
+	private String serviceId;
+	
+	@Autowired
+	private ApplicationContext ctx;
 	
 	@Autowired
     private MessageChannel channelBusBridge;
@@ -50,6 +66,7 @@ public class AppConfig {
 	@Autowired
 	private ReaderServiceImpl readerService;
 	
+	ConcurrentHashMap<String,RedirectRouting> redirectRoutingsHashMap = new ConcurrentHashMap<String, RedirectRouting>();
 	
     private LinkedBlockingQueue<IContract> queueDirtyPlainText = new LinkedBlockingQueue<>(100);
     private LinkedBlockingQueue<IContract> queueDirtyMsg = new LinkedBlockingQueue<>(100);
@@ -57,8 +74,35 @@ public class AppConfig {
     private LinkedBlockingQueue<IContract> queueAdminMsg = new LinkedBlockingQueue<>(10);
          
 	private Mediator mediator = new Mediator();    	        
-    private StatusMsg successStatus = new StatusMsg("202","Accepted");
-     
+    private StatusMsg successStatus = new StatusMsg("202","Accepted");         
+    
+	public String getServiceId() {
+		return serviceId;
+	}
+
+	public void initServiceId(String serviceId) {
+		this.serviceId = serviceId;
+	}
+
+	public ConcurrentHashMap<String, RedirectRouting> getRedirectRoutingsHashMap() {
+		return redirectRoutingsHashMap;
+	}
+    
+	public void setRedirectRoutingsHashMap(ConcurrentHashMap<String, RedirectRouting> redirectRoutingsHashMap) {
+		this.redirectRoutingsHashMap = redirectRoutingsHashMap;
+	}
+	
+	public void setRedirectRoutingHashMap(RedirectRouting routing){
+		this.redirectRoutingsHashMap.put(routing.getMethodName(), routing);		
+	}
+	
+	public IRemoteService getRemoteService(){
+		return (IRemoteService)ctx.getBean("remoteService");
+	}
+	
+	public IRemoteLogService getRemoteLogService(){
+		return (IRemoteLogService)ctx.getBean("remoteLogService");
+	}
     
     public LinkedBlockingQueue<IContract> getQueueAdminMsg() {  
   		return queueAdminMsg;

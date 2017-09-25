@@ -1,11 +1,10 @@
 package com.simple.server.service;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
@@ -26,7 +25,9 @@ public class LogBusMsgService{
 	
 	
 	final private static String LOG_HEADER_NAME = "log"; 
-	final private static String SERVICE_ID = "front"; 
+	
+	@Autowired
+	private AppConfig appConfig;
 	
 	public void transformAndSend(MessageChannel msgChannel, AContract msg) throws Exception {		
 		IContract message = newLogMsg(msg);												
@@ -63,7 +64,7 @@ public class LogBusMsgService{
 		instance.setResponseContentType(msg.getResponseContentType());
 		instance.setResponseContractClass(msg.getResponseContractClass());		
 		instance.setMethodHandler(msg.getMethodHandler());
-		instance.setServiceIdFrom(SERVICE_ID);			
+		instance.setServiceIdFrom(appConfig.getServiceId());			
 		instance.setMessageHeaderValue(msg.getClass().getSimpleName());
 		//instance.setMessageBodyValue(msg.toString());				
 		return instance;

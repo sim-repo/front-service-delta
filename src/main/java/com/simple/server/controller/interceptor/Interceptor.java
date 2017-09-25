@@ -17,8 +17,7 @@ public class Interceptor extends HandlerInterceptorAdapter  {
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception {		
-		//appConfig.getLogBusMsgService().sendHttpRequest(appConfig.getChannelBusLog(), request);  			
-		System.out.println("catch!");
+		//appConfig.getLogBusMsgService().sendHttpRequest(appConfig.getChannelBusLog(), request);  					
 		return super.preHandle(request, response, handler);
 	}	
 }

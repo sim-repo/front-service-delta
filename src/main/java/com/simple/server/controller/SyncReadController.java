@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,15 +30,14 @@ import org.springframework.web.client.RestTemplate;
 
 import com.simple.server.config.AppConfig;
 import com.simple.server.config.EndpointType;
-import com.simple.server.domain.contract.StatusMsg;
-import com.simple.server.domain.contract.BusReportMsg;
 import com.simple.server.domain.contract.BusApiItemMsg;
 import com.simple.server.domain.contract.BusClassificator;
 import com.simple.server.domain.contract.BusFilterGroup;
 import com.simple.server.domain.contract.BusReportItem;
+import com.simple.server.domain.contract.BusReportMsg;
 import com.simple.server.domain.contract.BusTagTemplate;
 import com.simple.server.domain.contract.IContract;
-import com.simple.server.service.remote.IRemoteService;
+import com.simple.server.domain.contract.StatusMsg;
 import com.simple.server.util.DateTimeConverter;
 import com.simple.server.util.ObjectConverter;
 
@@ -49,29 +47,298 @@ import com.simple.server.util.ObjectConverter;
 public class SyncReadController {
 
 	@Autowired
-	private ApplicationContext ctx;
-	
-	@Autowired
 	private AppConfig appConfig;
 	
-	IRemoteService remoteService = (IRemoteService)ctx.getBean("remoteService");
 	
-	
-	/**
+	/**	
 	 * param sql - любая sql-инструкция в LOG для операций чтения
 	 * @return json
 	 */
 	@RequestMapping(value = "/sync/get/json/log/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String  jsonLogAnyGet(@PathVariable("sql") String sql){		
 		String res = null;
-		try {
-			res = remoteService.getFlatJson(sql, EndpointType.NAV);			
+		try {						
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return res;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * <p>
+	 * ИСТОЧНИК ДАННЫХ BTX
+	 * </p>
+	 */	
+	@RequestMapping(value = "/sync/get/json/btx/login", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonBpmLoginGet(@RequestParam(value = "login", required = true) String login) {		
 
+		String key = "/sync/get/json/btx/login";
+		String params = String.format("?login=%s", login);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,params);	
+		if (res != null)
+				return res.getBody();
+		else
+			return null;
+	}
+	
+	
+	
+	/**
+	 * <p>
+	 * ИСТОЧНИК ДАННЫХ 1C
+	 * </p>
+	 */
+
+	@RequestMapping(value = "/sync/get/json/1c/company", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneCompanyGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/company";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	
+	@RequestMapping(value = "/sync/get/json/1c/departments", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneDepGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/departments";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+		
+	@RequestMapping(value = "/sync/get/json/1c/persons", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOnePersonsGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/persons";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/personsChanges", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOnePersonsChangeGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/personsChanges";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/countDaysOfUnusedLeave", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneDaysGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/countDaysOfUnusedLeave";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/EmployeeStates", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeeStatesGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/EmployeeStates";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/Employees", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeesGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/1c/Employees";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}	
+	
+	@RequestMapping(value = "/sync/get/json/1c/EmployeesChanges", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeesChangesGet(HttpServletRequest request) {					   
+		String key = "/sync/get/json/1c/EmployeesChanges";		
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	
+	
+	/**
+	 * <p>ИСТОЧНИК ДАННЫХ BPM</p>	
+	 */
+	
+	/**
+	 * <p>проект ЛК</p>	
+	 */
+	
+	
+	/**
+	 * 
+	 * @return ЛК: интервалы доставки из BPM 
+	 */
+	@RequestMapping(value = "/sync/get/json/deliveryInterval", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonBpmDeliveryIntervalGet(@RequestParam(value = "navClientId", required = true) String custNo,
+																		   @RequestParam(value = "productCategory", required = true) String productCategory) {		
+		String key = "/sync/get/json/bpm/deliveryInterval";
+		String params = String.format("?navClientId=%s&productCategory=%s", custNo, productCategory);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,params);		
+		return res;
+	}
+	
+	
+	/**
+	 * 
+	 * @return ЛК: индивидуальные клиентские цены
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/personalPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")	
+	public @ResponseBody String jsonNavPersonalPriceslGet(@RequestParam(value = "custId", required = false) String custNo,
+														   @RequestParam(value = "productId", required = false) String productId,
+														   @RequestParam(value = "shipmentMethod", required = false) String shipmentMethod,
+														   @RequestParam(value = "managerId", required = false) String managerId,
+														   @RequestParam(value = "contractId", required = false) String contractId,
+														   @RequestParam(value = "quantity", required = false) String quantity,
+														   @RequestParam(value = "orderDate", required = false) String orderDate,
+														   @RequestParam(value = "dim2", required = false) String dim2){				
+																						
+		
+		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_GetPersonalActionPrice] "
+															+ "@AccountCode='%s', "
+															+ "@ProductCode='%s',"
+															+ "@ShipmentType=%s,"
+															+ "@ManagerCode='%s',"
+															+ "@ContractCode='%s',"
+															+ "@Quantity=%s,"
+															+ "@Orderdate='%s',"
+															+ "@Dim2='%s'"
+															,custNo
+															,productId
+															,shipmentMethod
+															,managerId
+															,contractId
+															,quantity
+															,orderDate
+															,dim2															
+															));
+		String res = null;		
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);				
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
+	/**
+	 * 
+	 * @return ЛК: матрица клиентов из BPM
+	 */
+	@RequestMapping(value = "/sync/get/json/clientMatrix", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonBpmDeliveryIntervalGe(@RequestParam(value = "navClientId", required = true) String navClientId) {	
+
+		String key = "/sync/get/json/bpm/clientMatrixes";
+		String params = String.format("?navClientId=%s", navClientId);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,params);				
+		return res;
+	}
+			
+	
+	/**
+	 * 
+	 * @return ЛК: рекомендации клиентов из BPM
+	 */
+	@RequestMapping(value = "/sync/get/json/clientRecommendations", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonBpmClientRecommendationGet(@RequestParam(value = "navClientId", required = true) String navClientId) {
+
+		String key = "/sync/get/json/bpm/clientRecommendations";
+		String params = String.format("?navClientId=%s", navClientId);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,params);		
+		return res;
+	}
+	
+	/**
+	 * 
+	 * @return ЛК: менеджеры из BPM
+	 */
+	@RequestMapping(value = "/sync/get/json/managerCRM", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonBpmManagerGet(HttpServletRequest request) {
+
+		String key = "/sync/get/json/bpm/manager";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key,"");		
+		return res;
+	}
+	
+	
+	
+	/**	
+	 * @param customerNo - NAV-код клиента
+	 * @return ЛК: разделенные строки заказа продажи, сгруппированные по категориям 
+	 */
+	@RequestMapping(value = "/sync/post/json/nav/so/item_category", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+	public @ResponseBody String  xmlNavItemCategoryGet(HttpServletRequest request, @RequestBody String xml) {				
+							
+		String charset = "Windows-1251";
+		if(request.getHeader("Accept-Charset") != null)
+			charset = request.getHeader("Accept-Charset");
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type","text/plain;charset="+charset);
+		
+		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getSorderSplit] '%s'",xml));
+		String res = null;		
+		try {
+			res = appConfig.getRemoteService().getFlatXml(sql.toString(), EndpointType.NAV);				
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
+	
+	/**
+	 * @param customerNo - NAV-код клиента
+	 * @return ЛК:клиентский прайс
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/custPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String  jsonNavCustPriceGet(@RequestParam(value = "custNo", required = true) String custNo,
+													 @RequestParam(value = "companyName", required = true) String companyName){						
+		StringBuilder sql = new StringBuilder(String.format("EXECUTE [dbo].[ESB_Get_CustomerPrices] @CustNo='%s', @CompanyName='%s'",custNo, companyName));
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
+	
+	/**
+	 * @param customerNo - NAV-код клиента
+	 * @return ЛК:карточка клиента
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/customer", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String  jsonNavCustomerGet(@RequestParam(value = "custNo", required = true) String custNo,
+													 @RequestParam(value = "companyName", required = true) String companyName){						
+		StringBuilder sql = new StringBuilder(String.format("EXECUTE [dbo].[esb_GetCustomerXML] @CustNo='%s', @CompanyName='%s'",custNo, companyName));
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatXml(sql.toString(), EndpointType.NAV);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
+	
 	
 	
 	
@@ -79,15 +346,16 @@ public class SyncReadController {
 	 * <p>ИСТОЧНИК ДАННЫХ Navision</p>	
 	 */
 	
+	
 	/**
 	 * @param sql - любая sql-инструкция в NAV для операций чтения
 	 * @return json
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String  jsonNavAnyGet(@PathVariable("sql") String sql){		
+	private @ResponseBody String  jsonNavAnyGet(@PathVariable("sql") String sql){		
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -100,10 +368,10 @@ public class SyncReadController {
 	 * @return json
 	 */
 	@RequestMapping(value = "/sync/get/xml/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String  xmlNavAnyGet(@PathVariable("sql") String sql){		
+	private @ResponseBody String  xmlNavAnyGet(@PathVariable("sql") String sql){		
 		String res = null;
 		try {
-			res = remoteService.getFlatXml(sql, EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatXml(sql, EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -112,6 +380,11 @@ public class SyncReadController {
 	}
 	
 	
+	
+	
+	
+	
+
 	/**
 	 * @param customerNo - NAV-код клиента
 	 * @return кредитный лимит клиента + овердрафт 
@@ -121,7 +394,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getCreditLimit] '%s'",customerNo));
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -139,7 +412,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getStateSorderQueue] '%s'", sorderId));
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -161,7 +434,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getCustOperations] @_custNo = '%s', @_shipmentType=%s", shipmentType==null?0:shipmentType));
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -219,7 +492,7 @@ public class SyncReadController {
 								
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -246,7 +519,7 @@ public class SyncReadController {
 		
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -271,7 +544,7 @@ public class SyncReadController {
 		
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -296,7 +569,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getSalesperson] %s",filter.toString()));
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -316,7 +589,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_getICustomers]");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -335,7 +608,7 @@ public class SyncReadController {
 		String sql = "EXEC [dbo].[web_isimple_getItemCatalog]";		
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -355,7 +628,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_GetSalesHistory @_customer_id = '" + custId + "'");
 		String res = null;	
 		try {
-			res =  remoteService.getComplexJson(sql.toString(), EndpointType.NAV);			
+			res =  appConfig.getRemoteService().getComplexJson(sql.toString(), EndpointType.NAV);			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -397,7 +670,7 @@ public class SyncReadController {
 			sql.append(",@_userID='"+userID+"'");
 			sql.append(",@_orderPostingDate='"+DateTimeConverter.dateToSQLFormat(orderPostingDate)+"'");
 		
-			res = remoteService.getComplexJson(sql.toString(), EndpointType.NAV);		
+			res = appConfig.getRemoteService().getComplexJson(sql.toString(), EndpointType.NAV);		
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -430,7 +703,7 @@ public class SyncReadController {
 																locationCode, 
 																companyName));						
 			
-			res = remoteService.getFlatJsonFirstObj(json.toString(), EndpointType.NAV);														
+			res = appConfig.getRemoteService().getFlatJsonFirstObj(json.toString(), EndpointType.NAV);														
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -452,7 +725,7 @@ public class SyncReadController {
 		String res = null;
 		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_GetInvQty] %s",companyName));
 		try {																					
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);														
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);														
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -472,7 +745,7 @@ public class SyncReadController {
 		String res = null;
 		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_getAllInvQty]");
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -491,7 +764,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 0");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -510,7 +783,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 1");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -528,7 +801,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 2");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -545,7 +818,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 12");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -562,7 +835,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 13");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -580,7 +853,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 14");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -597,7 +870,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 15");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -614,7 +887,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 16");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -632,7 +905,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 17");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -650,7 +923,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 18");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -668,7 +941,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 19");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -685,7 +958,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 20");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -702,7 +975,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 21");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -720,7 +993,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 22");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -738,7 +1011,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 23");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -756,7 +1029,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 24");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -774,7 +1047,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 25");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -792,7 +1065,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 26");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -809,7 +1082,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 27");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -827,7 +1100,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 30");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -845,7 +1118,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 31");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -863,7 +1136,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 32");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -881,7 +1154,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 33");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -899,7 +1172,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 34");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -917,7 +1190,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 37");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -935,7 +1208,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 50");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -953,7 +1226,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 51");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -972,7 +1245,7 @@ public class SyncReadController {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 52");
 		String res = null;
 		try {
-			res = remoteService.getFlatJson(sql.toString(), EndpointType.NAV);			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(), EndpointType.NAV);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -998,7 +1271,7 @@ public class SyncReadController {
 			json = ObjectConverter.xmlToJson(xml);
 			
 			String url = null;
-			List<Map<String,Object>> list =  remoteService.getListMap("EXEC web_dxbx_getConnectionUrl @_type=2");
+			List<Map<String,Object>> list =  appConfig.getRemoteService().getListMap("EXEC web_dxbx_getConnectionUrl @_type=2");
 			for(Map<String, Object> map: list){		
 				for(Map.Entry<String, Object> pair: map.entrySet()){				
 					url = (String) pair.getValue();
@@ -1014,14 +1287,13 @@ public class SyncReadController {
 			headers.setContentType(mediaType);
 			HttpEntity<String> entity = new HttpEntity<String>(json,headers);
 			ResponseEntity<String> r = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-		    res = ObjectConverter.jsonToXml(new String(r.getBody().getBytes("ISO-8859-1"), "UTF-8"));
+		    res = ObjectConverter.jsonToXml(new String(r.getBody().getBytes("ISO-8859-1"), "UTF-8"), true);
 		    res = res.replaceFirst("UTF-8", "Windows-1251");	
 		}
 		catch(HttpStatusCodeException  e){			
 			String errbody = null;
-			try {
-				System.out.println(new String(e.getResponseBodyAsString().getBytes("ISO-8859-1"), "UTF-8"));
-				errbody = ObjectConverter.jsonToXml(new String(e.getResponseBodyAsString().getBytes("ISO-8859-1"), "UTF-8"));
+			try {				
+				errbody = ObjectConverter.jsonToXml(new String(e.getResponseBodyAsString().getBytes("ISO-8859-1"), "UTF-8"), true);
 				errbody = errbody.replaceFirst("UTF-8", "Windows-1251");	
 			} catch (Exception e1) {
 				e1.printStackTrace();
@@ -1088,7 +1360,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site action group`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1101,7 +1373,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site actions`;";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1114,7 +1386,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site dimension`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1127,7 +1399,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site event`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1135,11 +1407,11 @@ public class SyncReadController {
 	}
 	
 	@CrossOrigin(origins = "http://msk10websvc2:4200")
-	@RequestMapping(value = "/sync/get/json/log/fgroup", method = RequestMethod.GET)
+	@RequestMapping(value = "/sync/get/json/log/fgroup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<IContract>  jsonLogGetFgroup(){		
 		List<IContract> res = null;
 		try {
-			res = remoteService.getAllMsg(new BusFilterGroup());			
+			res = appConfig.getRemoteLogService().getAllMsg(new BusFilterGroup());			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1152,7 +1424,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site tab`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1165,7 +1437,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site filter relations`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1178,7 +1450,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site filter defaults`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1192,7 +1464,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`bus news`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1201,7 +1473,7 @@ public class SyncReadController {
 	
 	
 	@CrossOrigin(origins = "http://msk10websvc2:4200")
-	@RequestMapping(value = "/sync/get/json/log/reports", method = RequestMethod.GET)	
+	@RequestMapping(value = "/sync/get/json/log/reports", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
 	public @ResponseBody List<BusTagTemplate> jsonGetReports() {			
 		try {
 			return appConfig.getReaderService().getAllTags();
@@ -1224,7 +1496,7 @@ public class SyncReadController {
 			}
 			if(sqlParam.length()>0)
 				sqlParam.deleteCharAt(sqlParam.length()-1);							
-			result = remoteService.getFlatJson(sqlTemplate+" "+sqlParam.toString(), EndpointType.NAV);								
+			result = appConfig.getRemoteService().getFlatJson(sqlTemplate+" "+sqlParam.toString(), EndpointType.NAV);								
 		} catch (Exception e) {
 			e.printStackTrace();	
 		}
@@ -1237,7 +1509,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`site admin`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1250,7 +1522,7 @@ public class SyncReadController {
 		String res = null;
 		String sql = "SELECT * FROM jdb.`bus api`";
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1259,13 +1531,13 @@ public class SyncReadController {
 	
 	
 	@CrossOrigin(origins = "http://msk10websvc2:4200")
-	@RequestMapping(value = "/sync/post/json/log/api/item/add", method = RequestMethod.POST)
+	@RequestMapping(value = "/sync/post/json/log/api/item/add", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody StatusMsg  jsonLogPostApiAdd(@RequestBody BusApiItemMsg msg){		
 		String res = null;					
 		try {			
 			msg.setEndPointId(EndpointType.LOG);
 			msg.setIsDirectInsert(true);
-			remoteService.insert(msg);	
+			appConfig.getRemoteService().insert(msg);	
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1276,13 +1548,13 @@ public class SyncReadController {
 	
 	
 	@CrossOrigin(origins = "http://msk10websvc2:4200")
-	@RequestMapping(value = "/sync/post/json/log/api/item/del", method = RequestMethod.POST)
+	@RequestMapping(value = "/sync/post/json/log/api/item/del", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody StatusMsg  jsonLogPostApiDel(@RequestBody BusApiItemMsg msg){		
 		String res = null;					
 		try {
 			msg.setEndPointId(EndpointType.LOG);
 			msg.setIsDirectInsert(true);
-			remoteService.delete(msg);			
+			appConfig.getRemoteService().delete(msg);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new StatusMsg("406", e.toString());
@@ -1298,7 +1570,7 @@ public class SyncReadController {
 		String res = null;			
 		String sql = "SELECT * FROM jdb.`bus api item` ORDER BY `top_priority` ASC";											
 		try {
-			res = remoteService.getFlatJson(sql, EndpointType.LOG);			
+			res = appConfig.getRemoteService().getFlatJson(sql, EndpointType.LOG);			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();

@@ -22,7 +22,7 @@
 	<bean id="outboundConnectionFactory"  class="org.springframework.jms.connection.CachingConnectionFactory">
 		<property name="targetConnectionFactory">
 			<bean class="org.apache.activemq.ActiveMQConnectionFactory">
-				<property name="brokerURL" value="tcp://localhost:61616?jms.useAsyncSend=true"/>	
+				<property name="brokerURL" value="tcp://msk10websvc3:61616?jms.useAsyncSend=true"/>	
 				<property name="trustAllPackages" value="true"/>	
 			</bean>
 		</property>

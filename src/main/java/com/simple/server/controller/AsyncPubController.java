@@ -1,9 +1,15 @@
 package com.simple.server.controller;
 
+import java.nio.charset.Charset;
+
 import javax.servlet.http.HttpServletRequest;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,24 +43,29 @@ public class AsyncPubController {
 	
 	private final static String CONFIRM = "CONFIRM"; 
 	
-	@RequestMapping(value = "json/pub/uni", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public StatusMsg jsonPub(@RequestBody UniMsg msg) {
-		try {
+	@RequestMapping(value = "json/pub/uni", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> jsonPub(@RequestBody UniMsg msg) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType mediaType = new MediaType("application", "json", Charset.forName("UTF-8"));
+		try {					
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
 			msg.setMethodHandler("/async/json/pub/uni");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusPubMsg.class);
 			msg.setOperationType(OperationType.PUB);
+		
 			appConfig.getQueueDirtyMsg().put(msg);
-			return appConfig.getSuccessStatus();
+			return new ResponseEntity<String>("", headers, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
+			return new ResponseEntity<String>(e.getCause().toString(), headers, HttpStatus.BAD_REQUEST);
 		}
 	}
 
 	@RequestMapping(value = "xml/pub/uni", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
-	public StatusMsg xmlPub(HttpServletRequest request, @RequestBody String xml) {
+	public ResponseEntity<String> xmlPub(HttpServletRequest request, @RequestBody String xml) {
+		HttpHeaders headers = new HttpHeaders();
+		MediaType mediaType = new MediaType("application", "xml", Charset.forName("UTF-8"));
 		try {
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
 			UniMsg msg = (UniMsg)ObjectConverter.xmlToObject(xml, UniMsg.class);			
@@ -64,10 +75,10 @@ public class AsyncPubController {
 			msg.setOperationType(OperationType.PUB);
 			
 			appConfig.getQueueDirtyMsg().put(msg);
-			return appConfig.getSuccessStatus();
+			return new ResponseEntity<String>("", headers, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new StatusMsg("406", e.toString());
+			return new ResponseEntity<String>(e.getCause().toString(), headers, HttpStatus.BAD_REQUEST);
 		}
 	}
 	
@@ -80,7 +91,7 @@ public class AsyncPubController {
 			status.setChannel(appConfig.getChannelBusBridge());
 			status.setLogClass(BusSubMsg.class);
 			status.setOperationType(OperationType.SUB);
-			status.setEventId(CONFIRM);
+		
 			
 			appConfig.getQueueDirtyMsg().put(status);
 			return appConfig.getSuccessStatus();
@@ -93,8 +104,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "nav/pub/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonNavPubSuccess(@RequestBody SuccessPubMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("nav pub success catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			msg.setMethodHandler("nav/pub/success");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusWriteMsg.class);
@@ -112,8 +122,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "nav/pub/err", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonNavPubErr(@RequestBody ErrPubMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("nav pub err catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			msg.setMethodHandler("nav/pub/err");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusWriteMsg.class);
@@ -131,8 +140,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "nav/pub/confirm", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonConfirm(@RequestBody ConfirmMsg confirm) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("nav pub confirmation ::::: " + confirm);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			confirm.setMethodHandler("/async/json/sub/confirm");
 			confirm.setChannel(appConfig.getChannelBusBridge());
 			confirm.setLogClass(BusSubMsg.class);
@@ -150,8 +158,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "oktell/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonOktellListener(@RequestBody UniMinMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("oktell listener catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			IncomingBufferMsg in = new IncomingBufferMsg();
 			in.copyFrom(msg);
 
@@ -172,8 +179,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "btx/uni/listener", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonBtxListener(@RequestBody UniMinMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("btx listener catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			IncomingBufferMsg in = new IncomingBufferMsg();
 			in.copyFrom(msg);
 
@@ -194,8 +200,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "btx/uni/listener2", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public void jsonBtxListener2(@RequestBody UniMinMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("btx listener2 catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -205,8 +210,7 @@ public class AsyncPubController {
 	@RequestMapping(value = "oktell/sub/err", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public StatusMsg jsonOktellSubErr(@RequestBody ErrSubMsg msg) {
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("oktell sub err catch ::::: " + msg);
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());			
 			msg.setMethodHandler("oktell/sub/err");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusWriteMsg.class);
@@ -225,7 +229,6 @@ public class AsyncPubController {
 	public StatusMsg jsonBtxSubErr(@RequestBody ErrSubMsg msg) {
 		try {
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
-			System.out.println("btx sub err catch ::::: " + msg);
 			msg.setMethodHandler("btx/sub/err");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusWriteMsg.class);

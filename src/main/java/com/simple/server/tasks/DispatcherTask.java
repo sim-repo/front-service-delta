@@ -55,8 +55,7 @@ public class DispatcherTask extends AbstractTask {
         }
        
         Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-        appConfig.getQueueDirtyMsg().drainTo(list, MAX_NUM_ELEMENTS);  
-                
+        appConfig.getQueueDirtyMsg().drainTo(list, MAX_NUM_ELEMENTS);               
         for(IContract msg: list) {     
         	if(msg instanceof AContract){        	        
         		appConfig.getQueueClientMsg().put(msg);

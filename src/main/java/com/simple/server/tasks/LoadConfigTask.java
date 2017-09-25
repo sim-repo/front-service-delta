@@ -1,6 +1,5 @@
 package com.simple.server.tasks;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -10,23 +9,24 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.simple.server.config.AppConfig;
-import com.simple.server.domain.contract.AContract;
+import com.simple.server.config.EndpointType;
+
 import com.simple.server.domain.contract.IContract;
+import com.simple.server.domain.contract.RedirectRouting;
 import com.simple.server.mediators.CommandType;
-import com.simple.server.statistics.time.Timing;
-import com.simple.server.util.DateTimeConverter;
+
 
 @SuppressWarnings("static-access")
-@Service("ClientSenderTask")
+@Service("LoadConfigTask")
 @Scope("prototype")
-public class ClientSenderTask extends AbstractTask {
-		
+public class LoadConfigTask  extends AbstractTask {
+	  
 	@Autowired
 	private AppConfig appConfig;
 	
-	private static Integer MAX_NUM_ELEMENTS = 1000;
     private List<IContract> list = new ArrayList<>();
-
+	
+	
     @Override
     public void update(Observable o, Object arg) {
 
@@ -43,27 +43,31 @@ public class ClientSenderTask extends AbstractTask {
             }
         }      
     }
-
-
-    @Override
+	
+	
+	@Override
     public void task() throws Exception {  
-        if(appConfig.getQueueClientMsg().drainTo(list, MAX_NUM_ELEMENTS)==0){
-            list.add(appConfig.getQueueClientMsg().take());
-        }
-             
-        Thread.currentThread().sleep(Timing.getTimeMaxSleep());		
-        appConfig.getQueueClientMsg().drainTo(list, MAX_NUM_ELEMENTS);  
-        
-        for (IContract msg : list) {        	
-        	Thread.currentThread().sleep(Timing.getTimeMaxSleep());		   
-        	msg.setRequestInDatetime(DateTimeConverter.getCurDate());      
-     
-        	appConfig.getLogBusMsgService().transformAndSend(appConfig.getChannelBusLog(), (AContract)msg);          	
-        	appConfig.getBusMsgService().send(msg.getChannel(), msg.getMethodHandler(), msg);		
-        }
-                   
+		      
+		List<IContract> res = null;
+		RedirectRouting redirect = null;
+		
+		setDeactivateMySelfAfterTaskDone(true);
+		
+		Thread.currentThread().sleep(4000);		
+		
+		try {
+			RedirectRouting rec = new RedirectRouting();
+			rec.setEndPointId(EndpointType.LOG);
+			res = appConfig.getRemoteLogService().getAllMsg(new RedirectRouting());	
+			for(IContract msg: res){
+				redirect = (RedirectRouting)msg;
+				appConfig.setRedirectRoutingHashMap(redirect);				
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		      			
         throwToStatistic(list.size());
         list.clear();
     }
-    
+   	
 }

@@ -13,23 +13,25 @@ import com.simple.server.factory.TaskRunner;
 public class PostInit implements ApplicationListener<ContextRefreshedEvent> {
 	  
 	@Autowired
-	  TaskRunner taskRunner;
+	TaskRunner taskRunner;
 	  
 	@Autowired
 	AppConfig appConfig;	  
 	  
-	@Value("${queueSizeAdminMsg.int.property :100}")
+	@Value("${queueSizeAdminMsg.int.property}")
 	private int initQueueSizeAdminMsg;
 	
-	@Value("${queueSizeClientMsg.int.property :100}")
+	@Value("${queueSizeClientMsg.int.property}")
 	private int initQueueSizeClientMsg;
 	  
-	@Value("${queueSizeDirtyMsg.int.property :100}")
+	@Value("${queueSizeDirtyMsg.int.property}")
 	private int initQueueSizeDirtyMsg;
 	   
-	@Value("${queueSizeDirtyPlainText.int.property :100}")
+	@Value("${queueSizeDirtyPlainText.int.property}")
 	private int initQueueSizeDirtyPlainText;
 	
+	@Value("${service.String.property}")
+	private String serviceId;
 
 	@Override
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
@@ -38,7 +40,7 @@ public class PostInit implements ApplicationListener<ContextRefreshedEvent> {
 		appConfig.initQueueClientMsg(initQueueSizeClientMsg);
 		appConfig.initQueueDirtyMsg(initQueueSizeDirtyMsg);
 		appConfig.initQueueDirtyPlainText(initQueueSizeDirtyPlainText);
-		
+		appConfig.initServiceId(serviceId);
 		taskRunner.initProcessing();
 	}
 }
