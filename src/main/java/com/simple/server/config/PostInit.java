@@ -33,6 +33,9 @@ public class PostInit implements ApplicationListener<ContextRefreshedEvent> {
 	@Value("${service.String.property}")
 	private String serviceId;
 
+	@Value("${navGroupId:NAV}")
+	private String navGroupId;
+	
 	@Override
 	public void onApplicationEvent(final ContextRefreshedEvent event) {
 					
@@ -40,6 +43,7 @@ public class PostInit implements ApplicationListener<ContextRefreshedEvent> {
 		appConfig.initQueueClientMsg(initQueueSizeClientMsg);
 		appConfig.initQueueDirtyMsg(initQueueSizeDirtyMsg);
 		appConfig.initQueueDirtyPlainText(initQueueSizeDirtyPlainText);
+		appConfig.initNavGroupId(navGroupId);		
 		appConfig.initServiceId(serviceId);
 		taskRunner.initProcessing();
 	}

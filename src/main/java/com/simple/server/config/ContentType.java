@@ -6,7 +6,7 @@ public enum ContentType {
 	XmlPlainText("XmlPlainText"), 
 	ApplicationJson("ApplicationJson"), 
 	ApplicationXml("ApplicationXml"), 
-	UNKNOWN("UNKNOWN");
+	Other("Other");
 
 	private final String value;
 
@@ -30,6 +30,6 @@ public enum ContentType {
 	}
 
 	public static ContentType getDefault() {
-		return UNKNOWN;
+		return Other;
 	}
 }

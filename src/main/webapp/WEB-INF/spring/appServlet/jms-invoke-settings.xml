@@ -5,8 +5,8 @@
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="syncConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://msk10websvc2:61616"/>
-        <property name="trustAllPackages" value="true"/>
+        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <!-- <property name="trustAllPackages" value="true"/>  -->
     </bean>
 
   	<bean id="syncBridge" class="org.apache.activemq.command.ActiveMQQueue">

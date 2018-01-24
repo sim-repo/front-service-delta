@@ -1,19 +1,12 @@
 package com.simple.server.domain.contract;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.UUID;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.springframework.messaging.MessageChannel;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.simple.server.config.AppConfig;
 import com.simple.server.config.ContentType;
-import com.simple.server.config.EndpointType;
-import com.simple.server.config.ErrorType;
 import com.simple.server.config.OperationType;
 import com.simple.server.config.RoleType;
 import com.simple.server.util.DateTimeConverter;
@@ -88,23 +81,23 @@ public abstract class AContract implements IContract {
 	}
 	
 	
-	public EndpointType getSenderId() {
-		return EndpointType.fromValue(senderId);
+	public String getSenderId() {
+		return senderId;
 	}
 
 	@XmlElement(name = "senderId")
-	public void setSenderId(EndpointType senderId) {
-		this.senderId = senderId.toValue();
+	public void setSenderId(String senderId) {
+		this.senderId = senderId;
 	}
 
 	@Override
-	public EndpointType getEndPointId() {
-		return EndpointType.fromValue(endPointId);
+	public String getEndPointId() {
+		return endPointId;
 	}
 
 	@Override
-	public void setEndPointId(EndpointType endPointId) {
-		this.endPointId = endPointId.toValue();
+	public void setEndPointId(String endPointId) {
+		this.endPointId = endPointId;
 	}
 		
 	@Override
@@ -221,12 +214,12 @@ public abstract class AContract implements IContract {
 		this.isDirectInsert = isDirectInsert;
 	}
 
-	public EndpointType getSubscriberId() {
-		return EndpointType.fromValue(subscriberId);
+	public String getSubscriberId() {
+		return subscriberId;
 	}
 
-	public void setSubscriberId(EndpointType subscriberId) {
-		this.subscriberId = subscriberId.toValue();
+	public void setSubscriberId(String subscriberId) {
+		this.subscriberId = subscriberId;
 	}
 
 	public String getSubscriberHandler() {
@@ -245,12 +238,12 @@ public abstract class AContract implements IContract {
 		this.subscriberStoreClass = subscriberStoreClass;
 	}
 
-	public EndpointType getPublisherId() {
-		return EndpointType.fromValue(publisherId);
+	public String getPublisherId() {
+		return publisherId;
 	}
 
-	public void setPublisherId(EndpointType publisherId) {
-		this.publisherId = publisherId.toValue();
+	public void setPublisherId(String publisherId) {
+		this.publisherId = publisherId;
 	}
 
 	public String getPublisherHandler() {
@@ -326,16 +319,16 @@ public abstract class AContract implements IContract {
 		if(this.getJuuid() == null)
 			this.setJuuid(msg.getJuuid());		
 		
-		if(this.getEndPointId().equals(EndpointType.UNKNOWN))
+		if(this.getEndPointId().equals(""))
 			this.setEndPointId(msg.getEndPointId());
 		
-		if(this.getSenderId().equals(EndpointType.UNKNOWN))
+		if(this.getSenderId().equals(""))
 			this.setSenderId(msg.getSenderId());
 		
-		if(this.getPublisherId().equals(EndpointType.UNKNOWN))
+		if(this.getPublisherId().equals(""))
 			this.setPublisherId(msg.getPublisherId());
 		
-		if(this.getSubscriberId().equals(EndpointType.UNKNOWN))
+		if(this.getSubscriberId().equals(""))
 			this.setSubscriberId(msg.getSubscriberId());
 				
 		if(this.getEventId()==null || this.getEventId().equals(""))

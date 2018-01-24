@@ -1,7 +1,6 @@
 package com.simple.server.domain.contract;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import org.springframework.messaging.MessageChannel;
 import com.fasterxml.jackson.annotation.JsonGetter;
@@ -9,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.simple.server.config.ContentType;
-import com.simple.server.config.EndpointType;
-
 
 
 @JsonPropertyOrder({"clazz"})
@@ -36,7 +33,7 @@ public interface IContract extends Serializable{
 	
 	MessageChannel getChannel();	
 	
-	EndpointType getEndPointId();	
+	String getEndPointId();	
 	
 	String getServiceOutDatetime();
 	
@@ -60,7 +57,7 @@ public interface IContract extends Serializable{
 	
 	void setIsDirectInsert(Boolean directInsert);
 	
-	void setEndPointId(EndpointType endPointId);
+	void setEndPointId(String endPointId);
 	
 	void setChannel(MessageChannel channel);			
 	

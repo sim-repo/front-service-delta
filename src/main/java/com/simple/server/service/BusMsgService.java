@@ -80,4 +80,19 @@ public class BusMsgService  implements IMsgService{
 		return res;
 	}
 	
+	
+	@Override
+	public @ResponseBody String checkRetranslate(String key){
+		
+		ResponseEntity<String> res = null;
+		
+			if (appConfig.getRedirectRoutingsHashMap().containsKey(key)) {								
+				RedirectRouting redirect = appConfig.getRedirectRoutingsHashMap().get(key);		
+				if(redirect.getUrl()!=null)
+					return redirect.getUrl();
+				return "url not found";
+			}		
+			return "url not found";
+	}
+	
 }

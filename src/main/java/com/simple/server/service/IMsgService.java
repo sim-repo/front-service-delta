@@ -12,4 +12,5 @@ public interface IMsgService {
 	void send(MessageChannel msgChannel, String msgHeaderVal, IContract msg) throws Exception;
 	void pushQueue(MessageChannel msgChannel, IContract msg) throws Exception;
 	@ResponseBody ResponseEntity<String> retranslate(String key, String params);
+	@ResponseBody String checkRetranslate(String key);
 }

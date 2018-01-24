@@ -22,7 +22,7 @@
     <int:channel id="businessTopicChannel"/>  
             	
     <bean id="connectionFactory" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="http://msk10websvc3:8161"/>
+        <property name="brokerURL" value="http://localhost:8161"/>
     </bean>
 	
     <int-jms:outbound-channel-adapter channel="businessTopicChannel"

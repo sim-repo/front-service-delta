@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.simple.server.config.AppConfig;
-import com.simple.server.config.EndpointType;
 import com.simple.server.config.OperationType;
 import com.simple.server.domain.contract.BusReadMsg;
 import com.simple.server.domain.contract.SorderMsg;
@@ -54,7 +53,7 @@ public class AsyncReadController {
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());		
 			req.setMethodHandler("/async/get/json/nav/tag");
 			req.setLogClass(BusReadMsg.class);
-			req.setEndPointId(EndpointType.NAV);
+			req.setEndPointId("NAV_WORK");
 			req.setOperationType(OperationType.READ);
 			req.setChannel(appConfig.getChannelBusBridge());
 			req.setRequestInDatetime(DateTimeConverter.getCurDate());

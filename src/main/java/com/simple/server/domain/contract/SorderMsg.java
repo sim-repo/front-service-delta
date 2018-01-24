@@ -118,6 +118,7 @@ public class SorderMsg extends AContract{
 	protected String customerCardId;
 	
 	protected String sorderAmt;
+		
 	
 	protected List<SalesLineMsg> slList = new ArrayList();
 	
