@@ -103,4 +103,82 @@ public class SyncUtilController {
 	public @ResponseBody String jsonRetranslateGet(@RequestParam(value = "key", required = true) String key) {								
 		return appConfig.getBusMsgService().checkRetranslate(key);			
 	}
+	
+	
+
+	/**
+	 * 
+	 * @return [jdb].[log pub success] 
+	 */
+	@RequestMapping(value = "util/log/success", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonLogSuccessGet(@RequestParam(value = "eventId", required = false) String eventId,
+												  @RequestParam(value = "juuid", required = false) String juuid) {								
+
+		StringBuilder sql = null;
+		String res = null;
+		if(eventId != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_success_byEventId`('%s');",eventId));
+		else if (juuid != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_success_byUUID`('%s');",juuid));
+			
+		try {
+			String original = appConfig.getRemoteService().getFlatJson(sql.toString(), appConfig.LOG_ENDPOINT_NAME);	
+			res = ObjectConverter.prettyJson(original);		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;		
+	}
+	
+	
+	/**
+	 * 
+	 * @return [jdb].[log pub err] 
+	 */
+	@RequestMapping(value = "util/log/err", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonLogErrGet(@RequestParam(value = "eventId", required = false) String eventId,
+												  @RequestParam(value = "juuid", required = false) String juuid) {								
+
+		StringBuilder sql = null;
+		String res = null;
+		if(eventId != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_err`('%s','');",eventId));
+		else if (juuid != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_err`('','%s');",juuid));
+			
+		try {
+			String original = appConfig.getRemoteService().getFlatJson(sql.toString(), appConfig.LOG_ENDPOINT_NAME);	
+			res = ObjectConverter.prettyJson(original);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return [jdb].[hot pub] 
+	 */
+	@RequestMapping(value = "util/log/hot", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonLogHotGet(@RequestParam(value = "eventId", required = false) String eventId,
+												  @RequestParam(value = "juuid", required = false) String juuid) {								
+
+		StringBuilder sql = null;
+		String res = null;
+		if(eventId != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_hotPub`('%s','');",eventId));
+		else if (juuid != null)
+			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_hotPub`('','%s');",juuid));
+			
+		try {
+			String original = appConfig.getRemoteService().getFlatJson(sql.toString(), appConfig.LOG_ENDPOINT_NAME);	
+			res = ObjectConverter.prettyJson(original);		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;			
+	}
+	
 }

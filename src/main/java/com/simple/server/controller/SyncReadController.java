@@ -155,6 +155,8 @@ public class SyncReadController {
 		return res;
 	}
 
+	
+	
 	/**
 	 * <p>
 	 * ИСТОЧНИК ДАННЫХ BPM
@@ -1323,6 +1325,72 @@ public class SyncReadController {
 		}
 		return new ResponseEntity<String>(res, responseHeaders, HttpStatus.OK);
 	}
+	
+	
+	
+	
+	/**
+	 * 
+	 * @return товарный каталог
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/item/catalog", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String getItemCatalog(@RequestParam(value = "itemNo", required = false) String itemId,
+											   @RequestParam(value = "endpointId", required = false) String endpointId) {	
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_sw_getItemCatalog] ");
+		if(itemId != null)
+			sql.append("@ItemNo ='"+itemId+"'");		
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));							
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;	
+	}
+	
+	
+	/**
+	 * 
+	 * @return товарный рейтинг
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/item/rating", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String getItemRating(@RequestParam(value = "itemNo", required = false) String itemId,
+											  @RequestParam(value = "endpointId", required = false) String endpointId) {	
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_sw_getItemRatings] ");
+		if(itemId != null)
+			sql.append("@ItemNo ='"+itemId+"'");		
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;	
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@RequestMapping(value = "/tag", method = RequestMethod.GET)
 	public String htmlTag(Locale locale, Model model) {

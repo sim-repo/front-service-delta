@@ -58,7 +58,7 @@ public class LoadConfigTask  extends AbstractTask {
 		Thread.currentThread().sleep(4000);		
 		
 		try {			
-			System.out.println("loading ..");
+			
 			res = appConfig.getRemoteLogService().getAllMsg(new RedirectRouting());
 			System.out.println("redirect routings size: "+res.size());
 			for(IContract msg: res){
@@ -75,7 +75,6 @@ public class LoadConfigTask  extends AbstractTask {
 					appConfig.setSessionFactories(sf.getEndpointGroupId(), sf.getEndpointId());			
 			}
 									
-			System.out.println("well done ..");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

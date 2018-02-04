@@ -55,11 +55,9 @@ public class AsyncPubController {
 	public ResponseEntity<String> xmlPub(HttpServletRequest request, @RequestBody String xml) {
 		HttpHeaders headers = new HttpHeaders();		
 		try {
-			Thread.currentThread().sleep(Timing.getTimeMaxSleep());	
-			UniMsg msg = (UniMsg)ObjectConverter.xmlToObject(xml, UniMsg.class);	
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());							
 			
-			msg.setSenderId("NAV_WORK"); //temporary
-			
+			UniMsg msg = (UniMsg)ObjectConverter.xmlToObject(xml, UniMsg.class);										
 			msg.setMethodHandler("/async/json/pub/uni");
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusPubMsg.class);
@@ -79,6 +77,25 @@ public class AsyncPubController {
 		try {
 			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
 			status.setMethodHandler("/async/json/sub/confirm");
+			status.setChannel(appConfig.getChannelBusBridge());
+			status.setLogClass(BusSubMsg.class);
+			status.setOperationType(OperationType.SUB);
+		
+			
+			appConfig.getQueueDirtyMsg().put(status);
+			return appConfig.getSuccessStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new StatusMsg("406", e.toString());
+		}
+	}
+	
+	
+	@RequestMapping(value = "xml/sub/confirm", method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE)
+	public StatusMsg xmlConfirm(@RequestBody StatusMsg status) {
+		try {
+			Thread.currentThread().sleep(Timing.getTimeMaxSleep());
+			status.setMethodHandler("/async/xml/sub/confirm");
 			status.setChannel(appConfig.getChannelBusBridge());
 			status.setLogClass(BusSubMsg.class);
 			status.setOperationType(OperationType.SUB);
