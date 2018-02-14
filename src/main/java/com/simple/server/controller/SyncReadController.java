@@ -1262,7 +1262,7 @@ public class SyncReadController {
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 52");
 		String res = null;
-		try {
+		try {			
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
 					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
 		} catch (Exception e) {

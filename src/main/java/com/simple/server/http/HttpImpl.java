@@ -44,7 +44,7 @@ import com.simple.server.util.ObjectConverter;
 import org.springframework.http.MediaType;
 public class HttpImpl {
 
-public static ResponseEntity<String> get(RedirectRouting redirect, String params) throws Exception {
+	public static ResponseEntity<String> get(RedirectRouting redirect, String params) throws Exception {
 		
 		ResponseEntity<String> res = null;
 		Boolean useAuth = false;

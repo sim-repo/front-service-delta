@@ -147,6 +147,8 @@ public class SyncUtilController {
 			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_err`('','%s');",juuid));
 			
 		try {
+			
+					
 			String original = appConfig.getRemoteService().getFlatJson(sql.toString(), appConfig.LOG_ENDPOINT_NAME);	
 			res = ObjectConverter.prettyJson(original);
 		} catch (Exception e) {
@@ -173,6 +175,8 @@ public class SyncUtilController {
 			sql = new StringBuilder(String.format("CALL `jdb`.`get_log_hotPub`('','%s');",juuid));
 			
 		try {
+			if (appConfig.getRemoteService() == null)
+				System.out.println("NNNNNUUUUULLL");
 			String original = appConfig.getRemoteService().getFlatJson(sql.toString(), appConfig.LOG_ENDPOINT_NAME);	
 			res = ObjectConverter.prettyJson(original);		
 		} catch (Exception e) {
