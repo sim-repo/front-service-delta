@@ -156,6 +156,28 @@ public class SyncReadController {
 	}
 
 	
+				
+	@RequestMapping(value = "/sync/get/json/1c/PersonsNew", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOnePersonsNewGet(HttpServletRequest request) {
+		String key = "/sync/get/json/1c/PersonsNew";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/EmployeesNew", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeesNewGet(HttpServletRequest request) {
+		String key = "/sync/get/json/1c/EmployeesNew";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
+		return res;
+	}
+	
+	@RequestMapping(value = "/sync/get/json/1c/EmployeesSchedule", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeesScheduleGet(HttpServletRequest request) {
+		String key = "/sync/get/json/1c/EmployeesSchedule";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
+		return res;
+	}
+	
 	
 	/**
 	 * <p>
@@ -1376,17 +1398,59 @@ public class SyncReadController {
 	
 	
 	
+	/**
+	 * 
+	 * @return expenditure
+	 */
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	@RequestMapping(value = "/sync/get/json/nav/hr/expenditure", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String getItemRating(
+			@RequestParam(value = "month", required = false) Integer month,
+			@RequestParam(value = "year", required = false) Integer year,
+			@RequestParam(value = "upperCFUFilter", required = false) String upperCFUFilter,
+			@RequestParam(value = "cfuFilter", required = false) String cfuFilter,
+			@RequestParam(value = "szFilter", required = false) String szFilter,
+			@RequestParam(value = "startDate", required = false) String startDate,
+			@RequestParam(value = "endDate", required = false) String endDate,
+			@RequestParam(value = "endpointId", required = false) String endpointId){	
+		
+		
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[sp_GetPlanFactHR] ");
+		
+		if(month != null)
+			sql.append("@Month ='"+month+"',");		
+		
+		if(year != null)
+			sql.append("@Year ='"+year+"',");	
+		
+		if(upperCFUFilter != null)
+			sql.append("@UpperCFUFilter ='"+upperCFUFilter+"',");	
+		
+		if(cfuFilter != null)
+			sql.append("@CFUFilter ='"+cfuFilter+"',");	
+		
+		if(szFilter != null)
+			sql.append("@SZFilter ='"+szFilter+"',");	
+		
+		if(startDate != null)
+			sql.append("@StartDate ='"+ DateTimeConverter.dateToSQLFormat(startDate) +"',");
+		
+		if(endDate != null)
+			sql.append("@EndDate ='"+ DateTimeConverter.dateToSQLFormat(endDate) +"',");
+		
+		sql.substring(0, sql.length() - 1);
+		
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;	
+	}
 	
 	
 	
