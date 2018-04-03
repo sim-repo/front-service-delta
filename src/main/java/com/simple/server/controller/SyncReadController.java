@@ -1438,12 +1438,12 @@ public class SyncReadController {
 		if(endDate != null)
 			sql.append("@EndDate ='"+ DateTimeConverter.dateToSQLFormat(endDate) +"',");
 		
-		sql.substring(0, sql.length() - 1);
+		
 		
 		
 		String res = null;
 		try {
-			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+			res = appConfig.getRemoteService().getFlatJson(sql.substring(0, sql.length() - 1).toString(),
 					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));			
 		} catch (Exception e) {
 			e.printStackTrace();
