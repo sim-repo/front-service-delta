@@ -209,23 +209,27 @@ public class SyncReadController {
 	 * 
 	 * @return ЛК: индивидуальные клиентские цены
 	 */
+	//
 	@RequestMapping(value = "/sync/get/json/nav/personalPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavPersonalPriceslGet(
-			@RequestParam(value = "custId", required = false) String custNo,
-			@RequestParam(value = "productId", required = false) String productId,
-			@RequestParam(value = "shipmentMethod", required = false) String shipmentMethod,
-			@RequestParam(value = "managerId", required = false) String managerId,
-			@RequestParam(value = "contractId", required = false) String contractId,
-			@RequestParam(value = "quantity", required = false) String quantity,
-			@RequestParam(value = "orderDate", required = false) String orderDate,
-			@RequestParam(value = "dim2", required = false) String dim2,
+			@RequestParam(value = "custId", required = false, defaultValue = "") String custNo,
+			@RequestParam(value = "productId", required = false, defaultValue = "") String productId,
+			@RequestParam(value = "shipmentMethod", required = false, defaultValue = "") String shipmentMethod,
+			@RequestParam(value = "managerId", required = false, defaultValue = "") String managerId,
+			@RequestParam(value = "contractId", required = false, defaultValue = "") String contractId,
+			@RequestParam(value = "quantity", required = false, defaultValue = "") String quantity,
+			@RequestParam(value = "orderDate", required = false, defaultValue = "") String orderDate,
+			@RequestParam(value = "dim2", required = false, defaultValue = "") String dim2,
+			@RequestParam(value = "locationId", required = false, defaultValue = "") String locationId,		
+			@RequestParam(value = "companyId", required = false, defaultValue = "") String companyId,	
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 
+		
 		StringBuilder sql = new StringBuilder(String.format(
 				"EXEC [dbo].[web_GetPersonalActionPrice] " + "@AccountCode='%s', " + "@ProductCode='%s',"
 						+ "@ShipmentType=%s," + "@ManagerCode='%s'," + "@ContractCode='%s'," + "@Quantity=%s,"
-						+ "@Orderdate='%s'," + "@Dim2='%s'",
-				custNo, productId, shipmentMethod, managerId, contractId, quantity, orderDate, dim2));
+						+ "@Orderdate='%s'," + "@Dim2='%s'," + "@locationCode='%s'," + "@CompanyCode='%s'",
+				custNo, productId, shipmentMethod, managerId, contractId, quantity, orderDate, dim2, locationId, companyId));
 		String res = null;
 		try {
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
