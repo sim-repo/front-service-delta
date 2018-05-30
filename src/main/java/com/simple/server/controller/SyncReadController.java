@@ -51,6 +51,8 @@ public class SyncReadController {
 	 * 
 	 * @return json
 	 */
+	/* uncomment if necessary
+	 *  
 	@RequestMapping(value = "/sync/get/json/log/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonLogAnyGet(@PathVariable("sql") String sql) {
 		String res = null;
@@ -60,12 +62,16 @@ public class SyncReadController {
 			e.printStackTrace();
 		}
 		return res;
-	}
+	}*/
+	
+	
 
 	/**
-	 * <p>
-	 * ИСТОЧНИК ДАННЫХ BTX
-	 * </p>
+	 * <p> * Источник данных BTX ЛК: проверка логина в Битриксе </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param login (строка) - логин NAV-код клиента, обязательный
+	 * @return
 	 */
 	@RequestMapping(value = "/sync/get/json/btx/login", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonBpmLoginGet(@RequestParam(value = "login", required = true) String login) {
@@ -79,12 +85,16 @@ public class SyncReadController {
 			return null;
 	}
 
-	/**
-	 * <p>
-	 * ИСТОЧНИК ДАННЫХ 1C
-	 * </p>
-	 */
 
+	/**
+	 * <p> * Источник данных 1C: возвращает список компаний </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"CompanyID": "19c55247-0569-11e7-80d2-005056910141",
+	 * 				  "CompanyName": "ООО \"Ависта\"",
+	 * 				  "CompanyINN": "7705498966"}]
+	 */
 	@RequestMapping(value = "/sync/get/json/1c/company", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneCompanyGet(HttpServletRequest request) {
 
@@ -92,7 +102,21 @@ public class SyncReadController {
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
 		return res;
 	}
-
+	
+	/**
+	 * <p> * Источник данных 1C: возвращает список менеджеров по отделам </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"DepartmentID": "95c1b9c8-0599-11e8-8116-005056910141",
+	 * 				  "DepartmentCode": "СМЗП-0019",
+	 * 				  "DepartmentName": "Группа логистики",
+	 * 				  "ParentDepartmentID": "8d50324a-0598-11e8-8116-005056910141",
+	 * 				  "CompanyID": "34fdd607-6369-11e7-80f4-005056910141",
+	 * 				  "ManagerPersonID": "f256c325-468f-11e7-80d5-005056910141",
+	 * 				  "ManagerEmployeeID": "611865ae-4694-11e7-80d6-005056910141",
+	 * 				  "ManagerName": "Вася Пупкин"}]
+	 */
 	@RequestMapping(value = "/sync/get/json/1c/departments", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneDepGet(HttpServletRequest request) {
 
@@ -101,6 +125,25 @@ public class SyncReadController {
 		return res;
 	}
 
+	/**
+	 * <p> * Источник данных 1C: возвращает список сотрудников </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"PersonID": "d77384a9-b4b3-11e3-8063-00265554afe6",
+	 * 				  "PersonCode": "С0488",
+	 * 				  "FullName": "Вася Пупкин",
+	 * 				  "FirstName": "Вася",
+	 * 				  "LastName": "Пупкин",
+	 * 				  "MiddleName": "Пупкин",
+	 * 				  "Birthday": "1987-08-08T00:00:00",
+	 * 				  "TIN": "741709715485",
+	 * 				  "InsuranceNumber": "157-330-546 59",
+	 * 				  "Gender": "Мужской",
+	 * 				  "UserAccount": "SIMPLE\\vpupkin",
+	 * 				  "UserName": "",
+	 * 				  "Email": "vpupkin@simple.ru"}]
+	 */
 	@RequestMapping(value = "/sync/get/json/1c/persons", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOnePersonsGet(HttpServletRequest request) {
 
@@ -108,7 +151,15 @@ public class SyncReadController {
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
 		return res;
 	}
-
+	
+	
+	/**
+	 * <p> * Источник данных 1C: возвращает список изменений по сотрудникам </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON 
+	 */
 	@RequestMapping(value = "/sync/get/json/1c/personsChanges", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOnePersonsChangeGet(HttpServletRequest request) {
 
@@ -117,21 +168,78 @@ public class SyncReadController {
 		return res;
 	}
 
-	@RequestMapping(value = "/sync/get/json/1c/countDaysOfUnusedLeave", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<String> jsonOneDaysGet(HttpServletRequest request) {
 
-		String key = "/sync/get/json/1c/countDaysOfUnusedLeave";
-		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
-		return res;
-	}
-
+	/**
+	 * <p> * Источник данных 1C: возвращает список неиспользованных дней отпуска </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"Date": "2018-05-30T00:00:00",
+	 * 				  "EmployeeID": "28652e0d-b4b4-11e3-8063-00265554afe6",
+	 * 				  "EmployeeName": "Вася Пупкин",
+	 * 				  "CountDaysOfUnusedLeave": 18.67,
+	 * 				  "CountDaysOfBalance": 26}
+	 */	
 	@RequestMapping(value = "/sync/get/json/1c/countDaysOfUnusedLeaveNew", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneDaysNewGet(HttpServletRequest request) {
 		String key = "/sync/get/json/1c/countDaysOfUnusedLeaveNew";
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
 		return res;
 	}
+	
+	
+	
+	/**
+	 * <p> * Источник данных 1C: возвращает список сотрудников </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"PersonID": "d77384a9-b4b3-11e3-8063-00265554afe6",
+	 * 				  "PersonCode": "С0488",
+	 * 				  "FullName": "Пупкин Вася Васильевич",
+	 * 				  "FirstName": "Вася",
+	 * 				  "LastName": "Васильевич",
+	 * 				  "MiddleName": "Пупкин",
+	 * 				  "Birthday": "1987-08-08T00:00:00",
+	 * 				  "EmployeeID": "28652e0d-b4b4-11e3-8063-00265554afe6",
+	 * 				  "EmployeeCode": "КПЗП-00474",
+	 * 				  "PositionID": "4b9c68e1-d15a-11e7-8563-d10ce4c2b9af",
+	 * 				  "Position": "Специалист по документальному сопровождению отдела клиентского сервиса",
+	 * 				  "DepartmentID": "04a80812-194c-11e4-a258-00265554afe6",
+	 * 				  "DepartmentCode_": "00022",
+	 * 				  "DepartmentName": "Отдел клиентского сервиса",
+	 * 				  "ManagerID": "f87ea38d-d0c7-11dc-9388-005056c00002",
+	 * 				  "ManagerName": "Соболева Светлана Евгеньевна (осн.)",
+	 * 				  "HireDate": "2014-03-18T00:00:00",
+	 * 				  "DismissalDate": "0001-01-01T00:00:00",
+	 * 				  "EmploymentType": 0,
+	 * 				  "UserAccount": "SIMPLE\\vpupkin",
+	 * 				  "UserName": "",
+	 * 				  "Email": "vpupkin@simple.ru",
+	 * 				  "CompanyID": "3dde5999-9956-11e7-8103-005056910141",
+	 * 				  "ReasonOfDismissal": ""}]
+	 */	
+	@RequestMapping(value = "/sync/get/json/1c/EmployeesNew", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonOneEmployeesNewGet(HttpServletRequest request) {
+		String key = "/sync/get/json/1c/EmployeesNew";
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
+		return res;
+	}
 
+	/**
+	 * <p> * Источник данных 1C: возвращает список периодов отпусков </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"EmployeeID": "28652e0d-b4b4-11e3-8063-00265554afe6",
+	 * 				 "EmployeeName": "Вася Пупкин",
+	 * 				 "UserAccount": "SIMPLE\\vpupkin",
+	 * 				 "Status": "",
+	 * 				 "StatusName": "Отпуск основной",
+	 * 				 "DateStart": "2018-06-01T00:00:00",
+	 * 				 "DateEnd": "2018-06-09T00:00:00",
+	 * 				 "PersonID": "d77384a9-b4b3-11e3-8063-00265554afe6"}]
+	 */	
 	@RequestMapping(value = "/sync/get/json/1c/EmployeeStates", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneEmployeeStatesGet(HttpServletRequest request) {
 
@@ -140,14 +248,13 @@ public class SyncReadController {
 		return res;
 	}
 
-	@RequestMapping(value = "/sync/get/json/1c/Employees", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<String> jsonOneEmployeesGet(HttpServletRequest request) {
-
-		String key = "/sync/get/json/1c/Employees";
-		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
-		return res;
-	}
-
+	/**
+	 * <p> * Источник данных 1C: возвращает список изменений по сотрудникам </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON
+	 */	
 	@RequestMapping(value = "/sync/get/json/1c/EmployeesChanges", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneEmployeesChangesGet(HttpServletRequest request) {
 		String key = "/sync/get/json/1c/EmployeesChanges";
@@ -155,8 +262,26 @@ public class SyncReadController {
 		return res;
 	}
 
-	
-				
+		
+	/**
+	 * <p> * Источник данных 1C: возвращает список cотрудников </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"PersonID": "d77384a9-b4b3-11e3-8063-00265554afe6",
+	 * 				  "PersonCode": "С0488",
+	 * 				  "FullName": "Пупкин Вася Васильевич",
+	 * 				  "FirstName": "Вася",
+	 * 				  "LastName": "Пупкин",
+	 * 				  "MiddleName": "Васильевич",
+	 * 				  "Birthday": "1987-08-08T00:00:00",
+	 * 				  "TIN": "741709715485",
+	 * 				  "InsuranceNumber": "157-330-546 59",
+	 * 				  "Gender": "Мужской",
+	 * 				  "UserAccount": "SIMPLE\\vpupkin",
+	 * 				  "UserName": "",
+	 * 				  "Email": "vpupkin@simple.ru"}
+	 */		
 	@RequestMapping(value = "/sync/get/json/1c/PersonsNew", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOnePersonsNewGet(HttpServletRequest request) {
 		String key = "/sync/get/json/1c/PersonsNew";
@@ -164,13 +289,17 @@ public class SyncReadController {
 		return res;
 	}
 	
-	@RequestMapping(value = "/sync/get/json/1c/EmployeesNew", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<String> jsonOneEmployeesNewGet(HttpServletRequest request) {
-		String key = "/sync/get/json/1c/EmployeesNew";
-		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
-		return res;
-	}
 	
+	/**
+	 * <p> * Источник данных 1C: возвращает служебный график </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"EmployeeID": "7c4aded4-bfd2-11e3-8064-00265554afe6",
+	 * 				  "TypeOfWork": "Пятидневка",
+	 * 				  "StartDate": "2018-05-30T10:00:00",
+	 * 				  "EndDate": "2018-05-30T19:00:00"}
+	 */		
 	@RequestMapping(value = "/sync/get/json/1c/EmployeesSchedule", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonOneEmployeesScheduleGet(HttpServletRequest request) {
 		String key = "/sync/get/json/1c/EmployeesSchedule";
@@ -179,40 +308,62 @@ public class SyncReadController {
 	}
 	
 	
-	/**
-	 * <p>
-	 * ИСТОЧНИК ДАННЫХ BPM
-	 * </p>
-	 */
+
 
 	/**
-	 * <p>
-	 * проект ЛК
-	 * </p>
-	 */
-
-	/**
-	 * 
-	 * @return ЛК: интервалы доставки из BPM
-	 */
+	 * <p> * Источник данных BPM: возвращает интервалы доставки </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param navClientId - NAV-код клиента, пример:К55949, обязательно
+	 * @param productCategory - категория продукта, пример: "Алкоголь", обязательно
+	 * @param navisionDatabase - база NAV, пример: "СПБ", обязательно
+	 * @return JSON [
+	 * 				 {"date":"5\/31\/2018",
+	 * 				  "intervals":[
+	 * 						{"endTime":"18:00",
+	 * 						"startTime":"9:00"}
+	 * 				]}
+	 * 				]
+	 * 				
+	 */			
 	@RequestMapping(value = "/sync/get/json/deliveryInterval", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonBpmDeliveryIntervalGet(
 			@RequestParam(value = "navClientId", required = true) String custNo,
-			@RequestParam(value = "productCategory", required = true) String productCategory) {
+			@RequestParam(value = "productCategory", required = true) String productCategory,
+			@RequestParam(value = "navisionDatabase", required = true) String navisionDatabase			
+			) {
 		String key = "/sync/get/json/bpm/deliveryInterval";
-		String params = String.format("?navClientId=%s&productCategory=%s", custNo, productCategory);
+		String params = String.format("?navClientId=%s&productCategory=%s&navisionDatabase=%s", custNo, productCategory, navisionDatabase);
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
 		return res;
 	}
 
+
+	
 	/**
-	 * 
-	 * @return ЛК: индивидуальные клиентские цены
-	 */
-	//
+	 * <p> Источник данных NAV: список персональных цен и скидок </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custId - NAV-код клиента, пример:К55949, не обязательно
+	 * @param productId - категория продукта, пример: "106628", не обязательно
+	 * @param companyId - база NAV, пример: "СИМПЛ", не обязательно
+	 * @param shipmentMethod - тип отгрузки, пример: "2", не обязательно
+	 * @param contractId - договор, пример: "AGS11-11594", не обязательно
+	 * @param quantity - кол-во, не обязательно
+	 * @param orderDate - дата доставки, пример 20180530, не обязательно
+	 * @param locationId - РЦ1, не обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 * @return JSON [{
+	 * 					"Discount":35,
+	 * 					"Price":690,
+	 * 					"ActivityCode":"",
+	 * 					"AllowDisc":1
+	 * 				}]
+	 * 				
+	 */			
 	@RequestMapping(value = "/sync/get/json/nav/personalPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavPersonalPriceslGet(
-			@RequestParam(value = "custId", required = false, defaultValue = "") String custNo,
+			@RequestParam(value = "custId", required = false, defaultValue = "") String custId,
 			@RequestParam(value = "productId", required = false, defaultValue = "") String productId,
 			@RequestParam(value = "shipmentMethod", required = false, defaultValue = "") String shipmentMethod,
 			@RequestParam(value = "managerId", required = false, defaultValue = "") String managerId,
@@ -221,19 +372,46 @@ public class SyncReadController {
 			@RequestParam(value = "orderDate", required = false, defaultValue = "") String orderDate,
 			@RequestParam(value = "dim2", required = false, defaultValue = "") String dim2,
 			@RequestParam(value = "locationId", required = false, defaultValue = "") String locationId,		
-			@RequestParam(value = "companyId", required = false, defaultValue = "") String companyId,	
+			@RequestParam(value = "companyId", required = false) String companyId,	
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 
 		
-		StringBuilder sql = new StringBuilder(String.format(
-				"EXEC [dbo].[web_GetPersonalActionPrice] " + "@AccountCode='%s', " + "@ProductCode='%s',"
-						+ "@ShipmentType=%s," + "@ManagerCode='%s'," + "@ContractCode='%s'," + "@Quantity=%s,"
-						+ "@Orderdate='%s'," + "@Dim2='%s'," + "@locationCode='%s'," + "@CompanyCode='%s'",
-				custNo, productId, shipmentMethod, managerId, contractId, quantity, orderDate, dim2, locationId, companyId));
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_GetPersonalActionPrice] ");
+
+		if (custId != null) {
+			sql.append("@AccountCode = '" + custId + "',");
+		}
+		if (productId != null) {
+			sql.append("@ProductCode = '" + productId + "',");
+		}
+		if (shipmentMethod != null) {
+			sql.append("@ShipmentType = '" + shipmentMethod + "',");
+		}
+		if (managerId != null) {
+			sql.append("@ManagerCode = '" + managerId + "',");
+		}
+		if (contractId != null) {
+			sql.append("@ContractCode = '" + contractId + "',");
+		}
+		if (quantity != null) {
+			sql.append("@Quantity = '" + quantity + "',");
+		}
+		if (orderDate != null) {
+			sql.append("@Orderdate = '" + DateTimeConverter.dateToSQLFormat(orderDate) + "',");
+		}
+		if (dim2 != null) {
+			sql.append("@Dim2 = '" + dim2 + "',");
+		}
+		if (locationId != null) {
+			sql.append("@locationCode = '" + locationId + "',");
+		}
+		if (companyId != null) {
+			sql.append("@CompanyCode = '" + companyId + "',");
+		}
+		endpointId =   endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId);
 		String res = null;
 		try {
-			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
-					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+			res = appConfig.getRemoteService().getFlatJson(sql.substring(0, sql.length() - 1).toString(), endpointId );
 		} catch (Exception e) {
 			e.printStackTrace();
 			return e.getMessage();
@@ -242,11 +420,14 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @return ЛК: матрица клиентов из BPM
-	 */
+	 * <p> ЛК: Источник данных BPM: матрица клиентов </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param navClientId - NAV-код клиента, пример:К55949, обязательно	
+	 * @return JSON  				
+	 */			
 	@RequestMapping(value = "/sync/get/json/clientMatrix", method = RequestMethod.GET)
-	public @ResponseBody ResponseEntity<String> jsonBpmDeliveryIntervalGe(
+	public @ResponseBody ResponseEntity<String> jsonBpmDeliveryIntervalGet(
 			@RequestParam(value = "navClientId", required = true) String navClientId) {
 
 		String key = "/sync/get/json/bpm/clientMatrixes";
@@ -255,10 +436,20 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @return ЛК: рекомендации клиентов из BPM
-	 */
+	 * <p> ЛК: Источник данных BPM: рекомендации клиентов </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param navClientId - NAV-код клиента, пример:К55949, обязательно	
+	 * @return JSON [{"articles":["105267","103518","109235","110674","109237","107355","105015"],
+	 * 				  "code":"REC-311",
+	 * 				  "dateFrom":"4\/9\/2018",
+	 * 				  "dateTo":"6\/30\/2018",
+	 * 				  "description":"Наслаждайтесь утонченными винами и получайте шанс выиграть...",
+	 * 				  "detailPicture": "AAQSkZJRgABAQEASABIAAD\/2wBDA..."
+	 * 				}]		 		
+	 */	
 	@RequestMapping(value = "/sync/get/json/clientRecommendations", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonBpmClientRecommendationGet(
 			@RequestParam(value = "navClientId", required = true) String navClientId) {
@@ -269,10 +460,25 @@ public class SyncReadController {
 		return res;
 	}
 
+	
+	
+	
 	/**
-	 * 
-	 * @return ЛК: менеджеры из BPM
-	 */
+	 * <p> ЛК: Источник данных BPM: менеджеры </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param нет	
+	 * @return JSON [{
+	 * 					"code":"ab9c68d6-18e2-4519-b22e-590c3382d463",
+	 * 					"navId":"АЛЕШ",
+	 * 					"photo":null
+	 * 				},
+	 * 				{
+	 * 					"code":"104c5f16-fc66-48ce-926a-170f679c68bf",
+	 * 					"navId":"БЫКОВА_КВ",
+	 * 					"photo":null
+	 * 				}]		 		
+	 */	
 	@RequestMapping(value = "/sync/get/json/managerCRM", method = RequestMethod.GET)
 	public @ResponseBody ResponseEntity<String> jsonBpmManagerGet(HttpServletRequest request) {
 
@@ -281,11 +487,14 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * @param customerNo
-	 *            - NAV-код клиента
-	 * @return ЛК: разделенные строки заказа продажи, сгруппированные по категориям
-	 */
+	 * <p> ЛК: Источник данных NAV: разделенные строки заказа продажи, сгруппированные по категориям </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно	
+	 * @return JSON 		 		
+	 */	
 	@RequestMapping(value = "/sync/post/json/nav/so/item_category", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
 	public @ResponseBody String xmlNavItemCategoryGet(HttpServletRequest request, @RequestBody String xml,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -308,13 +517,25 @@ public class SyncReadController {
 		}
 		return res;
 	}
-
+	
+	
 	/**
-	 * @param customerNo
-	 *            - NAV-код клиента
-	 * @return ЛК:клиентский прайс
-	 */
-	@RequestMapping(value = "/sync/get/json/nav/custPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	 * <p> Источник данных NAV: клиентский прайс </p>
+	 * <p> Обращение: EXECUTE [dbo].[ESB_Get_CustomerPrices] @CustNo='%s', @CompanyName='%s'", custNo, companyName)</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
+	 * @param companyName - база NAV, пример: "СИМПЛ", обязательно
+	 * @param companyName 
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно	
+	 * @return JSON  {
+	 * 					"UnitPrice":790,
+	 * 					"Discount":15,
+	 * 					"ItemNo":"000002",
+	 * 					"Custno":"К44233"
+	 * 				 }		 		
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/item/custPrices", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavCustPriceGet(@RequestParam(value = "custNo", required = true) String custNo,
 			@RequestParam(value = "companyName", required = true) String companyName,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -330,6 +551,71 @@ public class SyncReadController {
 		}
 		return res;
 	}
+	
+	/**
+	 * <p> Источник данных NAV: интернет прайс </p>
+	 * <p> Обращение: EXEC [dbo].[web_getInternetPrice] @ItemNo='%s', @CompanyName='%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param itemNo - 75675, обязательно
+	 * @param companyName - база NAV, пример: "СИМПЛ", обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно	
+	 * @return JSON  [
+	 * 					{
+	 * 						"Qty":12,
+	 * 						"Result":6240
+	 * 					}
+	 * 				]	 		
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/item/iprice", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String getItemInternetPrice(
+			@RequestParam(value = "itemNo", required = true) String itemNo,
+			@RequestParam(value = "companyName", required = true) String companyName,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		
+		StringBuilder sql = new StringBuilder(String
+				.format("EXEC [dbo].[web_getInternetPrice] @ItemNo='%s', @CompanyName='%s'", itemNo, companyName));
+		String res = null;
+		try {			
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
+	
+	/**
+	 * @param priceDate
+	 *            - дата 
+	 * @return ЛК:клиентский прайс
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/customerPrice", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavCustPriceGet2(@RequestParam(value = "custNo", required = true) String custNo,
+			@RequestParam(value = "priceDate", required = true) String priceDate,
+			@RequestParam(value = "itemNo", required = true) String itemNo,
+			@RequestParam(value = "companyName", required = true) String companyName,
+			@RequestParam(value = "endpointId", required = false) String endpointId
+			) {
+		try {
+
+			StringBuilder sql = new StringBuilder(String.format(
+					"EXEC [dbo].[web_getCustomerPrice] @CustNo='%s', @PriceDate='%s', @ItemNo='%s', @CompanyName='%s'",
+					custNo, DateTimeConverter.dateToSQLFormat(priceDate), itemNo, companyName));
+			
+			
+			String res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));						
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+	}
+	
 
 	/**
 	 * @param customerNo

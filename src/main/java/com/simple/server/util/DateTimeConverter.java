@@ -22,6 +22,7 @@ public class DateTimeConverter {
 	private static final DateTimeFormatter DATE_FORMATTER =  
 		    new DateTimeFormatterBuilder()
 		        .append(null, new DateTimeParser[]{
+		        		DateTimeFormat.forPattern("yyyyMMdd").getParser(),
 		                DateTimeFormat.forPattern("dd/MM/yyyy").getParser(),
 		                DateTimeFormat.forPattern("dd.MM.yyyy").getParser(),
 		                DateTimeFormat.forPattern("dd-MM-yyyy").getParser(),
@@ -39,7 +40,7 @@ public class DateTimeConverter {
 		                DateTimeFormat.forPattern("dd-MM-yyyy HH:mm:ss.SSSz").getParser(),
 		                DateTimeFormat.forPattern("yyyy/MM/dd HH:mm:ss.SSSz").getParser(),
 		                DateTimeFormat.forPattern("yyyy.MM.dd HH:mm:ss.SSSz").getParser(),
-		                DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSSz").getParser(),
+		                DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss.SSSz").getParser(),		                
 		                DateTimeFormat.forPattern("HH:mm:ss").getParser(),
 		                DateTimeFormat.forPattern("HHmmss").getParser(),
 		                DateTimeFormat.forPattern("HH-mm-ss").getParser()		                		                

@@ -61,7 +61,7 @@ public class HttpImpl {
 			}
 			else {		
 				URI uri = new URI(redirect.getUrl()+params);
-				RestTemplate restTemplate = new RestTemplate(getSimplestClientHttpRequestFactory());				 
+				RestTemplate restTemplate = new RestTemplate(getSimpleClientHttpRequestFactory());				 
 				HttpEntity<String> entity = new HttpEntity<String>("", createHeaders());
 				res = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
 			}												
@@ -93,7 +93,7 @@ public class HttpImpl {
         HttpContext localContext = new BasicHttpContext();
         HttpGet httpGet = new HttpGet(url); 
         
-        final RequestConfig params = RequestConfig.custom().setConnectTimeout(5000).setSocketTimeout(5000).build();
+        final RequestConfig params = RequestConfig.custom().setConnectTimeout(5000).setConnectionRequestTimeout(5000).setSocketTimeout(5000).build();
         httpGet.setConfig(params);
 		        
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
@@ -149,9 +149,11 @@ public class HttpImpl {
 	
 	
 	private static ClientHttpRequestFactory getSimpleClientHttpRequestFactory() {
-	    int timeout = 5000;
-	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory= new HttpComponentsClientHttpRequestFactory();
+	    int timeout = 60000;
+	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory= new HttpComponentsClientHttpRequestFactory();	   
+	    clientHttpRequestFactory.setConnectionRequestTimeout(timeout);
 	    clientHttpRequestFactory.setConnectTimeout(timeout);
+	    clientHttpRequestFactory.setReadTimeout(timeout);
 	    return clientHttpRequestFactory;
 	}	
 	

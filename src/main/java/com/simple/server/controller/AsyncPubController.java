@@ -1,6 +1,8 @@
 package com.simple.server.controller;
 
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class AsyncPubController {
 	@Autowired
 	private AppConfig appConfig;
 	
+	 private AtomicInteger cnt =  new AtomicInteger(0);
 	
 	@RequestMapping(value = "json/pub/uni", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> jsonPub(@RequestBody UniMsg msg) {
@@ -41,7 +44,7 @@ public class AsyncPubController {
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusPubMsg.class);
 			msg.setOperationType(OperationType.PUB);
-		
+			
 			appConfig.getQueueDirtyMsg().put(msg);
 			return new ResponseEntity<String>("", headers, HttpStatus.OK);
 		} catch (Exception e) {
@@ -62,7 +65,8 @@ public class AsyncPubController {
 			msg.setChannel(appConfig.getChannelBusBridge());
 			msg.setLogClass(BusPubMsg.class);
 			msg.setOperationType(OperationType.PUB);
-			
+			Integer i = cnt.getAndIncrement(); 
+			System.out.println(i);
 			appConfig.getQueueDirtyMsg().put(msg);
 			return new ResponseEntity<String>("", headers, HttpStatus.OK);
 		} catch (Exception e) {
