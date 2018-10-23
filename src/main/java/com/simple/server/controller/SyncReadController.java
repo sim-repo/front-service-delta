@@ -1,6 +1,8 @@
 package com.simple.server.controller;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -37,14 +39,21 @@ import com.simple.server.domain.contract.BusReportMsg;
 import com.simple.server.domain.contract.BusTagTemplate;
 import com.simple.server.domain.contract.IContract;
 import com.simple.server.domain.contract.StatusMsg;
+import com.simple.server.http.HttpImpl;
 import com.simple.server.util.DateTimeConverter;
 import com.simple.server.util.ObjectConverter;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 
 @Controller
 public class SyncReadController {
 
 	@Autowired
 	private AppConfig appConfig;
+	
+	private static final Logger logger = LogManager.getLogger(SyncReadController.class);
 
 	/**
 	 * param sql - любая sql-инструкция в LOG для операций чтения
@@ -64,7 +73,57 @@ public class SyncReadController {
 		return res;
 	}*/
 	
+
+	/*
+	@RequestMapping(value = "/sync/get/json/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	private @ResponseBody String jsonNavAnyGet(@PathVariable("sql") String sql,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql,
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	*/
 	
+	/**
+	 * @param sql
+	 *            - любая sql-инструкция в NAV для операций чтения
+	 * @return json
+	 */
+	/*
+	@RequestMapping(value = "/sync/get/xml/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	private @ResponseBody String xmlNavAnyGet(@PathVariable("sql") String sql,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatXml(sql,
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	*/
+	
+	private void logInput(String url, ResponseEntity<String> res) {
+		String bodySubstring = "null";
+		
+		if (res != null && res.getBody() != null) {
+			if (res.getBody().length() > 50 ) {
+				bodySubstring = res.getBody().substring(0, 49);
+			} else 
+				if (res.getBody().length() > 1) {
+					bodySubstring = res.getBody().substring(0, 1);				
+				}
+		}
+		logger.debug(String.format("SyncCtrl POST %s , thread id: %s , body: %s", url,  Thread.currentThread().getId(), bodySubstring));
+	}
 
 	/**
 	 * <p> * Источник данных BTX ЛК: проверка логина в Битриксе </p>
@@ -83,6 +142,59 @@ public class SyncReadController {
 			return res.getBody();
 		else
 			return null;
+	}
+	
+	
+	/**
+	 * <p> * Источник данных NAV: Исключения по аттрибутам маркетинга </p>
+	 * <p> Обращение: EXEC web_GetAttrExclusions @CustNo = '%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custId (строка) - NAV-код клиента, обязательный
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 * @return
+	 */
+	
+	@RequestMapping(value = "/sync/get/json/nav/attrExclusions", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavAttrExclusionsGet(@RequestParam(value = "custId", required = true) String custId, 
+														 @RequestParam(value = "companyName", required = false) String companyName,														 
+														 @RequestParam(value = "endpointId", required = false) String endpointId) {		
+		StringBuilder sql = new StringBuilder(String.format("EXEC web_GetAttrExclusions @CustNo = '%s', @CompanyName = '%s'", custId, companyName));
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	/**
+	 * <p> * Источник данных NAV: проверка существования клиента </p>
+	 * <p> Обращение: EXEC web_CheckClientNav @BitrixId = '%s', @CompanyName = '%s' </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custId (строка) - Bitrix-код клиента, обязательный
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 * @return
+	 */
+	@RequestMapping(value = "/sync/get/json/nav/checkBitrixClientInNav", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavCheckBitrixClientInNavGet(@RequestParam(value = "custId", required = true) String custId,
+														 @RequestParam(value = "companyName", required = false) String companyName,
+														 @RequestParam(value = "endpointId", required = false) String endpointId) {		
+		
+		StringBuilder sql = new StringBuilder(String.format("EXEC web_CheckClientNav @BitrixId = '%s', @CompanyName = '%s'", custId, companyName));
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
 	}
 
 
@@ -308,7 +420,47 @@ public class SyncReadController {
 	}
 	
 	
+	/**
+	 * <p> * Источник данных BPM: возвращает баннеры по клиенту </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	 * @return JSON [{"EmployeeID": "7c4aded4-bfd2-11e3-8064-00265554afe6",
+	 * 				  "TypeOfWork": "Пятидневка",
+	 * 				  "StartDate": "2018-05-30T10:00:00",
+	 * 				  "EndDate": "2018-05-30T19:00:00"}
+	 */		
+	@RequestMapping(value = "/sync/get/json/bpm/getClientBanners", method = RequestMethod.GET)
+	public @ResponseBody ResponseEntity<String> jsonBpmClientBannersGet(@RequestParam(value = "navClientId", required = true) String navClientId) {
+		String key = "/sync/get/json/bpm/GetClientBanners";
+		String params = String.format("?navClientId=%s", navClientId);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
+		return res;
+	}
+	
+	
+	
 
+	/**
+	 * <p> * Источник данных 1C: Запрос на получение графиков работы сотрудников на дату </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param параметров нет
+	*/		
+	@RequestMapping(value = "/sync/get/json/1c/EmployeesScheduleByDate", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonOneEmployeesScheduleByDateGet(@RequestParam(value = "date", required = true) String date) {
+		String key = "/sync/get/json/1c/EmployeesScheduleByDate";
+		String params = String.format("?date=%s", date);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
+		if (res != null)
+			return res.getBody();
+		else
+			return null;
+	}
+		
+		
+		
+		
 
 	/**
 	 * <p> * Источник данных BPM: возвращает интервалы доставки </p>
@@ -433,6 +585,7 @@ public class SyncReadController {
 		String key = "/sync/get/json/bpm/clientMatrixes";
 		String params = String.format("?navClientId=%s", navClientId);
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
+		logInput(key+params, res);
 		return res;
 	}
 
@@ -455,11 +608,18 @@ public class SyncReadController {
 			@RequestParam(value = "navClientId", required = true) String navClientId) {
 
 		String key = "/sync/get/json/bpm/clientRecommendations";
+		
+		if (Base64.isBase64(navClientId)) {	
+			byte[] converted = Base64.decodeBase64(navClientId.getBytes());
+			navClientId = new String(converted, StandardCharsets.UTF_8);
+		}
 		String params = String.format("?navClientId=%s", navClientId);
-		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
+		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);		
+		logInput(key+params, res);
 		return res;
 	}
 
+	
 	
 	
 	
@@ -484,6 +644,7 @@ public class SyncReadController {
 
 		String key = "/sync/get/json/bpm/manager";
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, "");
+		logInput(key, res);
 		return res;
 	}
 
@@ -589,12 +750,19 @@ public class SyncReadController {
 	
 	
 	/**
-	 * @param priceDate
-	 *            - дата 
-	 * @return ЛК:клиентский прайс
-	 */
+	 * <p> Источник данных NAV: клиентский прайс </p>
+	 * <p> Обращение: EXEC [dbo].[web_getCustomerPrice] @CustNo='%s', @PriceDate='%s', @ItemNo='%s', @CompanyName='%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
+	 * @param priceDate - дата, обязательно
+	 * @param itemNo - 75675, обязательно
+	 * @param companyName - база NAV, пример: "СИМПЛ", обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/customerPrice", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String jsonNavCustPriceGet2(@RequestParam(value = "custNo", required = true) String custNo,
+	public @ResponseBody String jsonNavCustPriceGet2(
+			@RequestParam(value = "custNo", required = true) String custNo,
 			@RequestParam(value = "priceDate", required = true) String priceDate,
 			@RequestParam(value = "itemNo", required = true) String itemNo,
 			@RequestParam(value = "companyName", required = true) String companyName,
@@ -618,12 +786,17 @@ public class SyncReadController {
 	
 
 	/**
-	 * @param customerNo
-	 *            - NAV-код клиента
-	 * @return ЛК:карточка клиента
-	 */
+	 * <p> Источник данных NAV: клиент </p>
+	 * <p> Обращение: EXECUTE [dbo].[esb_GetCustomerXML] @CustNo='%s', @CompanyName='%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
+	 * @param companyName - база NAV, пример: "СИМПЛ", обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/customer", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String jsonNavCustomerGet(@RequestParam(value = "custNo", required = true) String custNo,
+	public @ResponseBody String jsonNavCustomerGet(
+			@RequestParam(value = "custNo", required = true) String custNo,
 			@RequestParam(value = "companyName", required = true) String companyName,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder(String
@@ -639,54 +812,19 @@ public class SyncReadController {
 		return res;
 	}
 
-	/**
-	 * <p>
-	 * ИСТОЧНИК ДАННЫХ Navision
-	 * </p>
-	 */
 
-	/**
-	 * @param sql
-	 *            - любая sql-инструкция в NAV для операций чтения
-	 * @return json
-	 */
-	@RequestMapping(value = "/sync/get/json/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	private @ResponseBody String jsonNavAnyGet(@PathVariable("sql") String sql,
-			@RequestParam(value = "endpointId", required = false) String endpointId) {
-		String res = null;
-		try {
-			res = appConfig.getRemoteService().getFlatJson(sql,
-					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
 
-	/**
-	 * @param sql
-	 *            - любая sql-инструкция в NAV для операций чтения
-	 * @return json
-	 */
-	@RequestMapping(value = "/sync/get/xml/nav/any/{sql:.+}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	private @ResponseBody String xmlNavAnyGet(@PathVariable("sql") String sql,
-			@RequestParam(value = "endpointId", required = false) String endpointId) {
-		String res = null;
-		try {
-			res = appConfig.getRemoteService().getFlatXml(sql,
-					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
-		} catch (Exception e) {
-			e.printStackTrace();
-			return e.getMessage();
-		}
-		return res;
-	}
 
+
+	
 	/**
-	 * @param customerNo
-	 *            - NAV-код клиента
-	 * @return кредитный лимит клиента + овердрафт
-	 */
+	 * <p> Источник данных NAV: кредитный лимит клиента + овердрафт </p>
+	 * <p> Обращение: EXEC [dbo].[web_getCreditLimit] '%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param customerNo - NAV-код клиента, пример:К55949, обязательно	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/credit/{customerNo}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavCreditGet(@PathVariable(value = "customerNo") String customerNo,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -702,15 +840,21 @@ public class SyncReadController {
 		return res;
 	}
 
+
+	
 	/**
-	 * @param sorderId
-	 *            - внутренний NAV-id заказа-продажи
-	 * @return статус сообщения в очереди по заведению заказа-продажи в Нав
-	 */
-	@RequestMapping(value = "/sync/get/json/nav/so/state/{sorderId}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody String jsonNavSoStateGet(@PathVariable("sorderId") String sorderId,
+	 * <p> Источник данных NAV: узнать что с заказом в очереди BitrixQueue </p>
+	 * <p> Обращение: EXEC [dbo].[web_getStateSorderQueue] '%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param @_outerSorderId - внешний номер заказа, обязательно	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/so/state/{outerSorderId}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavSoStateGet(
+			@PathVariable("outerSorderId") String outerSorderId,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
-		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getStateSorderQueue] '%s'", sorderId));
+		StringBuilder sql = new StringBuilder(String.format("EXEC [dbo].[web_getStateSorderQueue] @_outerSorderId = '%s'", outerSorderId));
 		String res = null;
 		try {
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
@@ -722,21 +866,23 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * @param custNo
-	 *            - внутренний NAV-id клиента
-	 * @param shipmentType
-	 *            - тип отгрузки
-	 * @return клиентские операции
-	 */
+	 * <p> Источник данных NAV: клиентские операции </p>
+	 * <p> Обращение: EXEC [dbo].[web_getCustOperations] @_custNo = '%s', @_shipmentType=%s</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
+	 * @param shipmentType - тип отгрузки, не обязательно, по-умолчанию "0"		
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/cust/transactions", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavCustTransactionGet(
 			@RequestParam(value = "custNo", required = true) String custNo,
-			@RequestParam(value = "shipmentType", required = false) String shipmentType,
+			@RequestParam(value = "shipmentType", required = false, defaultValue = "0") String shipmentType,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder(
-				String.format("EXEC [dbo].[web_getCustOperations] @_custNo = '%s', @_shipmentType=%s",
-						shipmentType == null ? 0 : shipmentType));
+				String.format("EXEC [dbo].[web_getCustOperations] @_custNo = '%s', @_shipmentType=%s", custNo, shipmentType));
 		String res = null;
 		try {
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
@@ -748,13 +894,54 @@ public class SyncReadController {
 		return res;
 	}
 
+
+	/** 
+	 * <p> Источник данных NAV: список товаров/унификаторов по коду АП из акцизной марки </p>
+	 * <p> Обращение: EXEC [dbo].[web_GetAlcoCodes]  @Alcocode = '%s' </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param alcocode - NAV-код АП, не обязательно	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/item/codes", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavAlcocodeGet(
+			@RequestParam(value = "alcocode", required = false) String alcocode,		
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		
+		
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_GetAlcoCodes] ");
+
+		if (alcocode != null) {
+			sql.append("@Alcocode = '" + alcocode + "'");
+		}
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	
 	/**
-	 * @param custNo
-	 *            - внутренний NAV-id клиента
-	 * @param shipmentType
-	 *            - тип отгрузки
-	 * @return сообщения из очереди создания заказов
-	 */
+	 * <p> Источник данных NAV: узнать что с заказом в очереди BitrixQueue </p>
+	 * <p> Обращение: EXEC [dbo].[web_getStateSorderQueue] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param outerCustomerId - внешний-код клиента, не обязательно
+	 * @param outerSorderId - внешний номер заказа, не обязательно
+	 * @param outerUserID - внешний пользоваль UserID, не обязательно
+	 * @param sorderNo - NAV-код заказа, не обязательно
+	 * @param customerId - NAV-код клиента, пример:К55949, не обязательно
+	 * @param salespersonId - NAV-код менеджера, не обязательно
+	 * @param phoneNo - номер телефона, не обязательно
+	 * @param email - email, не обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/so/queue/state", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavSoQueueGet(
 			@RequestParam(value = "outerCustomerId", required = false) String outerCustomerId,
@@ -793,8 +980,36 @@ public class SyncReadController {
 		if (email != null) {
 			sql.append("@_email = '" + email + "',");
 		}
-		sql.substring(0, sql.length() - 1);
 
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.substring(0, sql.length() - 1),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+
+	
+
+	
+	/**
+	 * <p>  Источник данных NAV: узнать что с заказом в очереди BitrixQueue </p>
+	 * <p> Обращение: EXEC [dbo].[web_getStateSorderQueueShort] @_outerSorderId = '%s'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param outerSorderId - внешний номер заказа, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/so/queue/shortState", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavCustTransactionGet(
+			@RequestParam(value = "outerSorderId", required = true) String outerSorderId,				
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		
+		StringBuilder sql = new StringBuilder(
+				String.format("EXEC [dbo].[web_getStateSorderQueueShort] @_outerSorderId = '%s'",outerSorderId));
 		String res = null;
 		try {
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
@@ -805,14 +1020,15 @@ public class SyncReadController {
 		}
 		return res;
 	}
-
+	
+	
 	/**
-	 * 
-	 * @param custId
-	 *            - внутренний NAV-id клиента
-	 * @return список сотрудников
-	 */
-
+	 * <p> Источник данных NAV: список сотрудников </p>
+	 * <p> Обращение: EXEC [dbo].[web_getEmployee] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/employee", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavEmployeeGet(@RequestParam(value = "custId", required = false) String custId,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -834,12 +1050,12 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @param custId
-	 *            - внутренний NAV-id клиента
-	 * @return адреса доставки
-	 */
-
+	 * <p> Источник данных NAV: адрес доставки </p>
+	 * <p> Обращение: EXEC [dbo].[web_getShipAddress] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/cust/ship_addr", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavShipAddressGet(@RequestParam(value = "custId", required = false) String custId,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -859,13 +1075,57 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @param custId
-	 *            - внутренний NAV-id клиента
-	 * @return список менеджеров
-	 */
+	 * <p> Источник данных NAV: возвращает резервы по клиенту </p>
+	 * <p> Обращение: EXEC [dbo].[web_GetItemsBlOrder] @CustomerNo = '%s', @CompanyName=%s</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
+	 * @param company - компания, пример "СИМПЛ"	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/cust/blorder", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavShipAddressGet(
+			@RequestParam(value = "custId", required = false) String custId,
+			@RequestParam(value = "company", required = false) String company,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
 
+		
+		if (Base64.isBase64(custId)) {	
+			byte[] converted = Base64.decodeBase64(custId.getBytes());
+			custId = new String(converted, StandardCharsets.UTF_8);
+		}
+		if (Base64.isBase64(company)) {	
+			byte[] converted = Base64.decodeBase64(company.getBytes());
+			company = new String(converted, StandardCharsets.UTF_8);
+		}
+		
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_GetItemsBlOrder] ");
+		if (custId != null)
+			sql.append("@CustomerNo ='" + custId + "',");
+		if (company != null)
+			sql.append("@CompanyName ='" + company + "',");
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.substring(0, sql.length() - 1).toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+	
+	/**
+	 * <p> Источник данных NAV: список менеджеров </p>
+	 * <p> Обращение: EXEC [dbo].[web_getSalesperson] %s</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param custId - NAV-код клиента, пример:К55949, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/cust/manager", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String jsonNavManagerGet(@RequestParam(value = "custId", required = false) String custId,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -886,10 +1146,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return список клиентов, совершивших покупку
-	 */
+	 * <p> Источник данных NAV: список клиентов, совершивших покупку </p>
+	 * <p> Обращение: EXEC [dbo].[web_getICustomers]</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/cust/invoiced", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getManagers(@RequestParam(value = "endpointId", required = false) String endpointId) {
 
@@ -905,10 +1169,15 @@ public class SyncReadController {
 		return res;
 	}
 
+
+
 	/**
-	 * 
-	 * @return товарный каталог
-	 */
+	 * <p> Источник данных NAV: товарный каталог </p>
+	 * <p> Обращение: EXEC [dbo].[web_isimple_getItemCatalog] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/isimple/items_catalog", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getISimpleItems(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -925,11 +1194,13 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @param custId
-	 *            - внутренний NAV-id клиента
-	 * @return история клиентски продаж
-	 */
+	 * <p> Источник данных NAV: история клиентских продаж </p>
+	 * <p> Обращение: EXEC web_GetSalesHistory @_customer_id = %s </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param custId - NAV-код клиента, пример:К55949, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/cust/history/{custId}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getSalesHistory(@PathVariable("custId") String custId,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -945,23 +1216,20 @@ public class SyncReadController {
 		return res;
 	}
 
-	/**
-	 * 
-	 * @param companyName
-	 *            - код NAV-компании
-	 * @param itemNo
-	 *            - NAV-id товара
-	 * @param cfo
-	 *            - канал продаж
-	 * @param custId
-	 *            - NAV-id клиента
-	 * @param userID
-	 *            - пользователь
-	 * @param orderPostingDate
-	 *            - дата учета документа
-	 * @return ограничения выписки
-	 */
 
+	/**
+	 * <p> Источник данных NAV: ограничения выписки </p>
+	 * <p> Обращение: EXECUTE [dbo].[web_IsItemForbiddenForCompany] @_companyName=%s, @_itemNo=%s, @_cfo= ,@_custNo=%s, @_userID=%s, @_orderPostingDate=%s </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param custId - NAV-код клиента, пример:К55949, обязательно
+	 * @param companyName - код NAV-компании, обязательно
+	 * @param itemNo - NAV-id товара, обязательно
+	 * @param cfo - канал продаж, обязательно
+	 * @param userID - пользователь, обязательно
+	 * @param orderPostingDate - дата учета документа, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/item/restrict", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRestrictItemCompany(
 			@RequestParam(value = "companyName", required = true) String companyName,
@@ -992,18 +1260,18 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @param itemNo
-	 *            - NAV-id товара
-	 * @param shipmentType
-	 *            - тип отгрузки
-	 * @param locationCode
-	 *            - код склада
-	 * @param companyName
-	 *            - код компании
-	 * @return товарный остаток
-	 */
+	 * <p> Источник данных NAV: товарный остаток </p>
+	 * <p> Обращение: SELECT [dbo].[f_GetAvailInvQty](%s, %s, '%s', '%s') as [qty] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param companyName - код NAV-компании, обязательно
+	 * @param itemNo - NAV-id товара, обязательно
+	 * @param locationCode - код склада, обязательно
+	 * @param shipmentType - тип отгрузки, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/item/available", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemAvailable(@RequestParam(value = "itemNo", required = true) String itemNo,
 			@RequestParam(value = "shipmentType", required = false, defaultValue = "2") String shipmentType,
@@ -1027,11 +1295,13 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @param companyName
-	 *            - NAV-id компании
-	 * @return товарный остаток по компании
-	 */
+	 * <p> Источник данных NAV: товарный остаток по компании </p>
+	 * <p> Обращение: EXEC [dbo].[web_GetInvQty] %s </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param companyName - код NAV-компании, обязательно
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/items/available/{companyName}", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemAvailable(@PathVariable("companyName") String companyName,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1049,9 +1319,12 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @return весь товарный остаток
-	 */
+	 * <p> Источник данных NAV: все товарные остатки</p>
+	 * <p> Обращение: EXEC [dbo].[web_getAllInvQty] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/items/rem", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemsRemaining(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1067,11 +1340,39 @@ public class SyncReadController {
 		}
 		return res;
 	}
+	
+	
+	/**
+	 * <p> Источник данных NAV: создает учетки новых сотрудников компании</p>
+	 * <p> Обращение: EXEC [dbo].[web_getDiscGroupsByEmpl] </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/employee/list", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String getEmployeeList( @RequestParam(value = "endpointId", required = false) String endpointId) {
+
+		String res = null;
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_getDiscGroupsByEmpl]");
+		try {								
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+
+
 
 	/**
-	 * 
-	 * @return хэнбук цвета
-	 */
+	 * <p> Источник данных NAV: хэнбук цвета</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 0 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/color", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getColor(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 0");
@@ -1086,10 +1387,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук тип упаковки
-	 */
+	 * <p> Источник данных NAV: хэнбук тип упаковки</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 1 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/pack_type", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getPackType(@RequestParam(value = "endpointId", required = false) String endpointId) {
 
@@ -1105,10 +1410,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук сорт вина
-	 */
+	 * <p> Источник данных NAV: хэнбук сорт вина</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 2 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/wine_type", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getWineType(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 2");
@@ -1124,9 +1433,12 @@ public class SyncReadController {
 	}
 
 	/**
-	 * 
-	 * @return хэнбук сорт винограда
-	 */
+	 * <p> Источник данных NAV: хэнбук сорт вина</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 12 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/grape_kind", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getGrapeKind(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 12");
@@ -1141,10 +1453,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук винтаж рейтинг
-	 */
+	 * <p> Источник данных NAV: хэнбук винтаж рейтинг</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 13 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/rate_vintage", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRateVintage(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1160,10 +1476,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук тип вина
-	 */
+	 * <p> Источник данных NAV: хэнбук тип вина</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 14 </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/type_wine", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getTypeWine(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 14");
@@ -1178,10 +1498,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук апелласьон
-	 */
+	 * <p> Источник данных NAV: хэнбук апелласьон</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 15</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/appelason", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getAppelason(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 15");
@@ -1196,10 +1520,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук стиль
-	 */
+	 * <p> Источник данных NAV: хэнбук стиль</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 16</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/style_type", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getStyleType(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 16");
@@ -1214,10 +1542,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук деканация
-	 */
+	 * <p> Источник данных NAV: хэнбук деканация</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 17</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/decantation", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getDecantation(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1233,10 +1565,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук рейтинг
-	 */
+	 * <p> Источник данных NAV: хэнбук рейтинг</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 18</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/rate_agency", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRaitingAgency(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1252,10 +1588,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук сахар
-	 */
+	 * <p> Источник данных NAV: хэнбук сахар</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 19</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/sugar_type", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getSugarType(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 19");
@@ -1270,10 +1610,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук регион
-	 */
+	 * <p> Источник данных NAV: хэнбук регион</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 20</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/region", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRegion(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 20");
@@ -1288,10 +1632,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук производство
-	 */
+	 * <p> Источник данных NAV: хэнбук производство</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 21</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/manufacture", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getManufacture(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1307,10 +1655,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук возраст
-	 */
+	 * <p> Источник данных NAV: хэнбук возраст</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 22</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/aging", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getAging(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 22");
@@ -1325,10 +1677,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук класс
-	 */
+	 * <p> Источник данных NAV: хэнбук класс</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 23</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/class", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getClass2(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 23");
@@ -1343,10 +1699,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук
-	 */
+	 * <p> Источник данных NAV: хэнбук raw</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 24</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/raw", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRaw(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 24");
@@ -1361,10 +1721,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук стиль
-	 */
+	 * <p> Источник данных NAV: хэнбук стиль</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 25</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/style", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getStyle(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 25");
@@ -1379,10 +1743,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук категория
-	 */
+	 * <p> Источник данных NAV: хэнбук категория</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 26</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/drink_category", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getDrinkCategory(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1397,11 +1765,15 @@ public class SyncReadController {
 		}
 		return res;
 	}
+	
 
 	/**
-	 * 
-	 * @return хэнбук еще одна категория
-	 */
+	 * <p> Источник данных NAV: хэнбук еще одна категория</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 27</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/category", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getCategory(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 27");
@@ -1416,10 +1788,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук серия
-	 */
+	 * <p> Источник данных NAV: хэнбук еще одна серия</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 30</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/series", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getSeries(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 30");
@@ -1434,10 +1810,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук способ производства
-	 */
+	 * <p> Источник данных NAV: хэнбук способ производства</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 31</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/production_method", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getProductionMethod(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1453,10 +1833,14 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @return хэнбук материал
-	 */
+	 * <p> Источник данных NAV: хэнбук материал</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 31</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/material", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getMaterial(@RequestParam(value = "endpointId", required = false) String endpointId) {
 		StringBuilder sql = new StringBuilder("EXEC web_getHandBook @_type = 32");
@@ -1471,10 +1855,14 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук рекоммендации
-	 */
+	 * <p> Источник данных NAV: хэнбук рекоммендации</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 33</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */	
 	@RequestMapping(value = "/sync/get/json/nav/handbook/recommend_drink", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getRecommendDrink(
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1490,9 +1878,13 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @return хэнбук культивация
+	 * <p> Источник данных NAV: хэнбук культивация</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 34</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/handbook/cultivation_type", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getCultivationType(
@@ -1509,9 +1901,13 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук стекло
+	 * <p> Источник данных NAV: хэнбук стекло</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 34</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/handbook/accessory_class", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getAccessoryClass(
@@ -1528,9 +1924,13 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @return хэнбук страна
+	 * <p> Источник данных NAV: хэнбук страна</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 34</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/handbook/country", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getCounty(@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1546,9 +1946,13 @@ public class SyncReadController {
 		return res;
 	}
 
+	
 	/**
-	 * 
-	 * @return хэнбук товарный рейтинг
+	 * <p> Источник данных NAV: хэнбук товарный рейтинг</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 34</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/handbook/item_char_rating", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemCharacteristicRating2(
@@ -1565,9 +1969,13 @@ public class SyncReadController {
 		return res;
 	}
 
+
 	/**
-	 * 
-	 * @return хэнбук виноград
+	 * <p> Источник данных NAV: хэнбук виноград</p>
+	 * <p> Обращение: EXEC web_getHandBook @_type = 34</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/handbook/item_char_grape", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemCharacteristicGrape(
@@ -1583,7 +1991,17 @@ public class SyncReadController {
 		}
 		return res;
 	}
-
+	
+	
+	/**
+	 * <p> Источник данных NAV: ДоксИнБокс (DXBX) инвойсы</p>
+	 * <p> POST-запрос, принимает XML</p>
+	 * <p> в заголовках запроса использует клиентский Accept-Charset для возврата данных
+	 * <p> Проверяет соединение через EXEC web_dxbx_getConnectionUrl @_type=2
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
+	 */
 	@RequestMapping(value = "/sync/get/json/nav/dxbx/invoice", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<String> jsonNavDxbxGet(HttpServletRequest request, @RequestBody String xml,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
@@ -1642,8 +2060,11 @@ public class SyncReadController {
 	
 	
 	/**
-	 * 
-	 * @return товарный каталог
+	 * <p> Источник данных NAV: товарный каталог</p>
+	 * <p> Обращение: EXEC [dbo].[web_sw_getItemCatalog] @ItemNo = %s </p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/item/catalog", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemCatalog(@RequestParam(value = "itemNo", required = false) String itemId,
@@ -1665,8 +2086,11 @@ public class SyncReadController {
 	
 	
 	/**
-	 * 
-	 * @return товарный рейтинг
+	 * <p> Источник данных NAV: товарные рейтинги</p>
+	 * <p> Обращение: EXEC [dbo].[web_sw_getItemRatings]</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно
 	 */
 	@RequestMapping(value = "/sync/get/json/nav/item/rating", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemRating(@RequestParam(value = "itemNo", required = false) String itemId,
@@ -1686,13 +2110,21 @@ public class SyncReadController {
 		return res;	
 	}
 	
-	
-	
+		
 	/**
+	 * <p> Источник данных NAV: данные для HR</p>
+	 * <p> Обращение: EXEC [dbo].[sp_GetPlanFactHR] @Month = %s, @Year = %s,, @UpperCFUFilter = %s,, @CFUFilter = %s,, @SZFilter = %s,, @StartDate = %s,, @EndDate = %s,'</p>
+	 * @author Иванов И.
+	 * @version 1.0	 	
+	 * @param month - месяц, не обязательно
+	 * @param year - год, не обязательно
+	 * @param upperCFUFilter - ЦФО, не обязательно
+	 * @param cfuFilter - ЦФО, не обязательно
+	 * @param szFilter - , не обязательно
+	 * @param startDate - дата начала, не обязательно
+	 * @param endDate - дата окончания, не обязательно
 	 * 
-	 * @return expenditure
 	 */
-	
 	@RequestMapping(value = "/sync/get/json/nav/hr/expenditure", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
 	public @ResponseBody String getItemRating(
 			@RequestParam(value = "month", required = false) Integer month,
@@ -1727,9 +2159,7 @@ public class SyncReadController {
 		
 		if(endDate != null)
 			sql.append("@EndDate ='"+ DateTimeConverter.dateToSQLFormat(endDate) +"',");
-		
-		
-		
+
 		
 		String res = null;
 		try {

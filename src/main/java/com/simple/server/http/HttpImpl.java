@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.net.util.Base64;
@@ -27,6 +30,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,11 +48,17 @@ import com.simple.server.util.ObjectConverter;
 
 import org.springframework.http.MediaType;
 public class HttpImpl {
-
+	
+	private static final Logger logger = LogManager.getLogger(HttpImpl.class);
+	
+	
 	public static ResponseEntity<String> get(RedirectRouting redirect, String params) throws Exception {
 		
 		ResponseEntity<String> res = null;
 		Boolean useAuth = false;
+		
+		DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+		
 		if(params==null)
 			params="";
 		try {			
@@ -55,18 +66,22 @@ public class HttpImpl {
 			if (!(redirect.getUseAuth()==null)){
 				useAuth = redirect.getUseAuth();
 			}
-			
+			logger.debug(String.format("HttpImpl PRE %s  , thread id: %s", redirect.getUrl()+params, Thread.currentThread().getId()));	
 			if (useAuth){
 				res = doGetNTLM(redirect.getUrl()+params, "aplication/json");				
 			}
 			else {		
 				URI uri = new URI(redirect.getUrl()+params);
-				RestTemplate restTemplate = new RestTemplate(getSimpleClientHttpRequestFactory());				 
+				RestTemplate restTemplate = new RestTemplate(getSimpleClientHttpRequestFactory());	
+		
 				HttpEntity<String> entity = new HttpEntity<String>("", createHeaders());
-				res = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
-			}												
+																									
+				res = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);			
+			}	
+				
 			
 		} catch (HttpStatusCodeException e) {					
+			logger.debug(String.format("front: HttpImpl ERR %s , thread id: %s , thread name:  %s",redirect.getUrl()+params, Thread.currentThread().getId(), Thread.currentThread().getName()));	
 			String json = ObjectConverter.xmlToJson(e.getResponseBodyAsString());			
 			return new ResponseEntity<String>(json, createHeaders(), e.getStatusCode());
 		}
@@ -149,11 +164,11 @@ public class HttpImpl {
 	
 	
 	private static ClientHttpRequestFactory getSimpleClientHttpRequestFactory() {
-	    int timeout = 60000;
+	    int timeout = 10000;
 	    HttpComponentsClientHttpRequestFactory clientHttpRequestFactory= new HttpComponentsClientHttpRequestFactory();	   
 	    clientHttpRequestFactory.setConnectionRequestTimeout(timeout);
 	    clientHttpRequestFactory.setConnectTimeout(timeout);
-	    clientHttpRequestFactory.setReadTimeout(timeout);
+	    clientHttpRequestFactory.setReadTimeout(60000);
 	    return clientHttpRequestFactory;
 	}	
 	

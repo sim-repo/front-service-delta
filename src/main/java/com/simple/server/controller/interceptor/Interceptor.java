@@ -1,5 +1,7 @@
 package com.simple.server.controller.interceptor;
 
+import java.util.Scanner;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,8 +18,7 @@ public class Interceptor extends HandlerInterceptorAdapter  {
 	private AppConfig appConfig;
 	
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception {		
-		//appConfig.getLogBusMsgService().sendHttpRequest(appConfig.getChannelBusLog(), request);  					
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)throws Exception {						 			
 		return super.preHandle(request, response, handler);
 	}	
 }

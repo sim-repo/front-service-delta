@@ -3,12 +3,14 @@ package com.simple.server.service.remote;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DataAccessException;
+
 import com.simple.server.config.AppConfig;
 import com.simple.server.domain.contract.IContract;
 
 public interface IRemoteService {
 	AppConfig getAppConfig() throws Exception;
-	String getFlatJson(String sql, String endpoint) throws Exception;	
+	String getFlatJson(String sql, String endpoint) throws DataAccessException, Exception;	
 	String getComplexJson(String sql, String endpoint) throws Exception;
 	String getFlatXml(String sql, String endpoint) throws Exception;	
 	String getFlatJsonFirstObj(String sql, String endpoint) throws Exception;
