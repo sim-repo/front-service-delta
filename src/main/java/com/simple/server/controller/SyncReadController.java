@@ -122,7 +122,8 @@ public class SyncReadController {
 					bodySubstring = res.getBody().substring(0, 1);				
 				}
 		}
-		logger.debug(String.format("SyncCtrl POST %s , thread id: %s , body: %s", url,  Thread.currentThread().getId(), bodySubstring));
+		
+		logger.debug(String.format("SyncCtrl %s,  %s, thread id: %s , body: %s", System.currentTimeMillis(), url,  Thread.currentThread().getId(), bodySubstring));
 	}
 
 	/**
@@ -650,6 +651,37 @@ public class SyncReadController {
 
 	
 	/**
+	 * <p> Источник данных NAV: мотивация сотрудников </p>
+	 * <p> Обращение: EXEC [dbo].[sp_GetMotivatonCard] @EmpCode = '%s', @OnDate = %s</p>
+	 * @author Иванов И.
+	 * @version 1.0	 
+	 * @param emplId - NAV-код сотрудника, пример:К55949, обязательно
+	 * @param date - фомирование на дату, обязательно	
+	 * @param endpointId - инстанс СУБД: NAV, NAV_COPY, NAV_LK, не обязательно				
+	 */	
+	@RequestMapping(value = "/sync/get/json/nav/empl/motivation", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavMotivationCardGet(
+			@RequestParam(value = "emplId", required = true) String emplId ,
+			@RequestParam(value = "date", required = true) String date,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+
+		StringBuilder sql = new StringBuilder(
+				String.format("EXEC [dbo].[sp_GetMotivatonCard] @EmpCode = '%s', @OnDate=%s", emplId, DateTimeConverter.dateToSQLFormat(date)));
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
+	}
+
+	
+	
+	
+	/**
 	 * <p> ЛК: Источник данных NAV: разделенные строки заказа продажи, сгруппированные по категориям </p>
 	 * @author Иванов И.
 	 * @version 1.0	 
@@ -700,6 +732,8 @@ public class SyncReadController {
 	public @ResponseBody String jsonNavCustPriceGet(@RequestParam(value = "custNo", required = true) String custNo,
 			@RequestParam(value = "companyName", required = true) String companyName,
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		
+		
 		StringBuilder sql = new StringBuilder(String
 				.format("EXECUTE [dbo].[ESB_Get_CustomerPrices] @CustNo='%s', @CompanyName='%s'", custNo, companyName));
 		String res = null;
@@ -710,6 +744,7 @@ public class SyncReadController {
 			e.printStackTrace();
 			return e.getMessage();
 		}
+		
 		return res;
 	}
 	
@@ -752,6 +787,7 @@ public class SyncReadController {
 	/**
 	 * <p> Источник данных NAV: клиентский прайс </p>
 	 * <p> Обращение: EXEC [dbo].[web_getCustomerPrice] @CustNo='%s', @PriceDate='%s', @ItemNo='%s', @CompanyName='%s'</p>
+	 * ../front/sync/get/json/nav/customerPrice?itemNo=000486&companyName=%D0%A1%D0%98%D0%9C%D0%9F%D0%9B&custNo=%D0%9A20600&priceDate=02.11.2018
 	 * @author Иванов И.
 	 * @version 1.0	 
 	 * @param custNo - NAV-код клиента, пример:К55949, обязательно
@@ -769,14 +805,18 @@ public class SyncReadController {
 			@RequestParam(value = "endpointId", required = false) String endpointId
 			) {
 		try {
-
+			
+			System.out.println( System.currentTimeMillis());
+			logger.debug(String.format("/sync/get/json/nav/item/custPrices 1 %s,  thread id: %s ", System.currentTimeMillis(), Thread.currentThread().getId()));
 			StringBuilder sql = new StringBuilder(String.format(
 					"EXEC [dbo].[web_getCustomerPrice] @CustNo='%s', @PriceDate='%s', @ItemNo='%s', @CompanyName='%s'",
 					custNo, DateTimeConverter.dateToSQLFormat(priceDate), itemNo, companyName));
 			
 			
 			String res = appConfig.getRemoteService().getFlatJson(sql.toString(),
-					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));						
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));		
+			logger.debug(String.format("/sync/get/json/nav/item/custPrices 4 %s,  thread id: %s ", System.currentTimeMillis(), Thread.currentThread().getId()));
+			System.out.println( System.currentTimeMillis());
 			return res;
 		} catch (Exception e) {
 			e.printStackTrace();
