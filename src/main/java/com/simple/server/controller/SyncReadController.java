@@ -584,6 +584,10 @@ public class SyncReadController {
 			@RequestParam(value = "navClientId", required = true) String navClientId) {
 
 		String key = "/sync/get/json/bpm/clientMatrixes";
+		if (Base64.isBase64(navClientId)) {	
+			byte[] converted = Base64.decodeBase64(navClientId.getBytes());
+			navClientId = new String(converted, StandardCharsets.UTF_8);
+		}
 		String params = String.format("?navClientId=%s", navClientId);
 		ResponseEntity<String> res = appConfig.getBusMsgService().retranslate(key, params);
 		logInput(key+params, res);
@@ -666,7 +670,7 @@ public class SyncReadController {
 			@RequestParam(value = "endpointId", required = false) String endpointId) {
 
 		StringBuilder sql = new StringBuilder(
-				String.format("EXEC [dbo].[sp_GetMotivatonCard] @EmpCode = '%s', @OnDate=%s", emplId, DateTimeConverter.dateToSQLFormat(date)));
+				String.format("EXEC [dbo].[sp_GetMotivatonCard] @EmpCode = '%s', @OnDate='%s'", emplId, DateTimeConverter.dateToSQLFormat(date)));
 		String res = null;
 		try {
 			res = appConfig.getRemoteService().getFlatJson(sql.toString(),

@@ -5,6 +5,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.simple.server.config.AppConfig;
@@ -26,6 +28,10 @@ import com.simple.server.statistics.time.Timing;
 public class TestController {
 	@Autowired
 	private AppConfig appConfig;
+	
+	
+	
+	
 	
 	
 	@RequestMapping(value = "nav/pub/success", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -168,5 +174,35 @@ public class TestController {
 			e.printStackTrace();
 			return new StatusMsg("406", e.toString());
 		}
+	}
+	
+
+	@RequestMapping(value = "/sync/get/json/nav/execOutcoming", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
+	public @ResponseBody String jsonNavExecOutcomingGet(
+			@RequestParam(value = "eventId", required = false) String eventId,		
+			@RequestParam(value = "juuid", required = false) String juuid,
+			@RequestParam(value = "endpointId", required = false) String endpointId) {
+		
+		
+		StringBuilder sql = new StringBuilder("EXEC [dbo].[web_execOutcomingBuffer] ");
+		
+
+		
+		 
+		if (juuid != null) {
+				sql.append("@_juuid = '" + juuid + "'");
+		} else if (eventId != null) {
+			sql.append("@_eventId = '" + eventId + "'");
+		}	
+		
+		String res = null;
+		try {
+			res = appConfig.getRemoteService().getFlatJson(sql.toString(),
+					endpointId != null ? endpointId : appConfig.getDefaultEndpointByGroupId(appConfig.navGroupId));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.getMessage();
+		}
+		return res;
 	}
 }
